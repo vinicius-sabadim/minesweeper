@@ -4,24 +4,27 @@ import style from './Grid.style'
 class Grid extends React.Component {
   render() {
     const { rows, columns } = getGridSize(this.props.selectedLevel)
+    const grid = [...Array(rows)]
+      .map((_) => [...Array(columns)].map(initCell))
 
     return (
       <div>
-        {
-          [...Array(rows).keys()].map((row, indexRow) => (
-            <div key={ `row-${ indexRow }` } style={ style.row }>
-            {
-              [...Array(columns).keys()].map((cell, indexCell) => (
-                <div key={ `row-${ indexCell }` } style={ style.cell }></div>
-              ))
-            }
-            </div>
-          ))
-        }
+        { grid.map((row, indexRow) => (
+          <div key={ `row-${ indexRow }` } style={ style.row }>
+          { row.map((_, indexCell) => (
+            <div key={ `row-${ indexCell }` } style={ style.cell }></div>
+          ))}
+          </div>
+          ))}
       </div>
     )
   }
 }
+
+const initCell = () => ({
+  bomb: false,
+  flag: false
+})
 
 const getGridSize = (level) => {
   if (level === 'Beginner') return { rows: 9, columns: 9 }
