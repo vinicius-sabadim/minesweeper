@@ -32,7 +32,7 @@ const initCell = () => ({
   flag: false
 })
 
-const getGridSize = (level) => {
+export const getGridSize = (level) => {
   if (level === 'Beginner') return { rows: 9, columns: 9 }
   if (level === 'Intermediate') return { rows: 16, columns: 16 }
   if (level === 'Expert') return { rows: 16, columns: 30 }
