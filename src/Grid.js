@@ -1,4 +1,6 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+
 import style from './Grid.style'
 
 class Grid extends React.Component {
@@ -11,14 +13,18 @@ class Grid extends React.Component {
       <div>
         { grid.map((row, indexRow) => (
           <div key={ `row-${ indexRow }` } style={ style.row }>
-          { row.map((_, indexCell) => (
-            <div key={ `row-${ indexCell }` } style={ style.cell }></div>
-          ))}
+            { row.map((_, indexCell) => (
+              <div key={ `row-${ indexCell }` } style={ style.cell }></div>
+            ))}
           </div>
-          ))}
+        ))}
       </div>
     )
   }
+}
+
+Grid.propTypes = {
+  selectedLevel: PropTypes.string.isRequired
 }
 
 const initCell = () => ({
