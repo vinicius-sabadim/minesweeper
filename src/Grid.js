@@ -9,13 +9,17 @@ const Grid = () => (
     { ({ grid }) => (
       grid.map((row, indexRow) => (
         <div key={ `row-${ indexRow }` } style={ style.row }>
-          { row.map((_, indexCell) => (
-            <div key={ `row-${ indexCell }` } style={ style.cell }></div>
+          { row.map((cell, indexCell) => (
+            <div key={ `row-${ indexCell }` } style={ getCellStyle(cell) }></div>
           ))}
         </div>
       ))
     )}
   </GameConsumer>
 )
+
+const getCellStyle = (cell) => {
+  return cell.bomb ? style.cellBomb : style.cell
+}
 
 export default Grid

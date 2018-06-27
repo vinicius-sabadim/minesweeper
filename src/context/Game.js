@@ -1,30 +1,50 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import { random } from '../utils'
+
 const GameContext = React.createContext()
 
 class GameProvider extends React.Component {
   state = {
     bombs: 10,
+    columns: 9,
     grid: [],
+    rows: 9,
     selectedLevel: 'Beginner'
   }
 
   componentDidMount = () => {
-    this.startGrid(this.state.selectedLevel)
+    this.generateGrid()
   }
 
-  startGrid = (selectedLevel) => {
-    const { rows, columns } = this.getGridSize(selectedLevel)
-    const grid = [...Array(rows)]
+  generateGrid = () => {
+    const { bombs, columns, rows } = this.state
+    const grid = this.startGrid(this.state.rows, this.state.columns)
+    this.setState({ grid }, () => this.generateBombs(bombs, rows, columns, grid))
+  }
+
+  startGrid = (rows, columns) => {
+    return [...Array(rows)]
       .map((_) => [...Array(columns)].map(this.initCell))
+  }
+
+  generateBombs = (bombs, rows, columns, grid) => {
+    let bombsToInclude = bombs
+
+    while (bombsToInclude > 0) {
+      const row = random(rows)
+      const column = random(columns)
+
+      if (!grid[row][column].bomb) {
+        grid[row][column] = { bomb: true, flag: false }
+        bombsToInclude = bombsToInclude - 1
+      }
+    }
     this.setState({ grid })
   }
 
-  initCell = () => ({
-    bomb: false,
-    flag: false
-  })
+  initCell = () => ({ bomb: false, flag: false })
   
   getGridSize = (level) => {
     if (level === 'Beginner') return { rows: 9, columns: 9 }
@@ -33,7 +53,16 @@ class GameProvider extends React.Component {
   }
 
   changeLevel = (selectedLevel) => {
-    this.setState({ selectedLevel }, () => this.startGrid(selectedLevel))
+    const bombs = this.updateBombsQuantity(selectedLevel)
+    const { rows, columns } = this.getGridSize(selectedLevel)
+    
+    this.setState({ bombs, columns, rows, selectedLevel }, this.generateGrid)
+  }
+
+  updateBombsQuantity = (selectedLevel) => {
+    if (selectedLevel === 'Beginner') return 10
+    if (selectedLevel === 'Intermediate') return 40
+    return 99
   }
 
   render = () => {
