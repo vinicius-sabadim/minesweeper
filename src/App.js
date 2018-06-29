@@ -2,11 +2,13 @@ import React from 'react'
 import Grid from './Grid'
 import Menu from './Menu'
 
+import style from './App.style.js'
+
 const App = () => (
-  <React.Fragment>
+  <div style={ style.app }>
     <Menu />
     <Grid />
-  </React.Fragment>
+  </div>
 )
 
 export default App

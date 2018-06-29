@@ -25,8 +25,9 @@ class GameProvider extends React.Component {
   }
 
   startGrid = (rows, columns) => {
+    let id = 0
     return [...Array(rows)]
-      .map((_) => [...Array(columns)].map(this.initCell))
+      .map((_) => [...Array(columns)].map(() => this.initCell(id++)))
   }
 
   generateBombs = (bombs, rows, columns, grid) => {
@@ -112,7 +113,13 @@ class GameProvider extends React.Component {
     return dangerLevel
   }
 
-  initCell = () => ({ bomb: false, flag: false, dangerLevel: 0 })
+  initCell = (id) => ({
+    id,
+    bomb: false,
+    flag: false,
+    dangerLevel: 0,
+    isVisible: false
+  })
   
   getGridSize = (level) => {
     if (level === 'Beginner') return { rows: 9, columns: 9 }
@@ -133,10 +140,27 @@ class GameProvider extends React.Component {
     return 99
   }
 
+  cellClicked = (clickedCell) => {
+    if (clickedCell.isVisible) return
+
+    const newGrid = this.state.grid.map((row) => {
+      return row.map((cell) => {
+        if (clickedCell.id === cell.id) return ({
+          ...cell,
+          isVisible: true
+        })
+        return cell
+      })
+    })
+
+    this.setState({ grid: newGrid })
+  }
+
   render = () => {
     return (
       <GameContext.Provider value={{
         changeLevel: this.changeLevel,
+        cellClicked: this.cellClicked,
         grid: this.state.grid,
         selectedLevel: this.state.selectedLevel
       }}>
