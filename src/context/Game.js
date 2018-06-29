@@ -40,7 +40,7 @@ class GameProvider extends React.Component {
       if (!grid[row][column].bomb) {
         grid[row][column] = {
           ...grid[row][column],
-          bomb: true
+          hasBomb: true
         }
         bombsToInclude = bombsToInclude - 1
       }
@@ -72,42 +72,42 @@ class GameProvider extends React.Component {
 
     // Position 1
     if (hasUpperRow && hasLeftColumn) {
-      if (grid[indexRow - 1][indexColumn - 1].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow - 1][indexColumn - 1].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     // Position 2
     if (hasUpperRow) {
-      if (grid[indexRow - 1][indexColumn].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow - 1][indexColumn].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     // Position 3
     if (hasUpperRow && hasRightColumn) {
-      if (grid[indexRow - 1][indexColumn + 1].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow - 1][indexColumn + 1].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     // Position 4
     if (hasLeftColumn) {
-      if (grid[indexRow][indexColumn - 1].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow][indexColumn - 1].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     // Position 5
     if (hasRightColumn) {
-      if (grid[indexRow][indexColumn + 1].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow][indexColumn + 1].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     // Position 6
     if (hasLowerRow && hasLeftColumn) {
-      if (grid[indexRow + 1][indexColumn - 1].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow + 1][indexColumn - 1].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     // Position 7
     if (hasLowerRow) {
-      if (grid[indexRow + 1][indexColumn].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow + 1][indexColumn].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     // Position 8
     if (hasLowerRow && hasRightColumn) {
-      if (grid[indexRow + 1][indexColumn + 1].bomb) dangerLevel = dangerLevel + 1
+      if (grid[indexRow + 1][indexColumn + 1].hasBomb) dangerLevel = dangerLevel + 1
     }
 
     return dangerLevel
@@ -115,7 +115,7 @@ class GameProvider extends React.Component {
 
   initCell = (id) => ({
     id,
-    bomb: false,
+    hasBomb: false,
     flag: false,
     dangerLevel: 0,
     isVisible: false

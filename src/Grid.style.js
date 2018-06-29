@@ -1,65 +1,91 @@
+import { css } from 'glamor'
+
 const commonCell = {
   alignItems: 'center',
   backgroundColor: '#CCCCCC',
   cursor: 'pointer',
   display: 'flex',
-  fontSize: '18px',
   fontWeight: 'bold',
-  height: '30px',
+  height: '25px',
   justifyContent: 'center',
-  width: '30px' 
+  position: 'relative',
+  width: '25px'
 }
 
-const style = {
-  grid: {
-    borderTop: '2px solid #555555',
-    borderLeft: '2px solid #555555',
-    borderBottom: '2px solid #EEEEEE',
-    borderRight: '2px solid #EEEEEE',
-    display: 'inline-block'
-  },
-  cell: {
-    ...commonCell,
-    borderTop: '2px solid #EEEEEE',
-    borderLeft: '2px solid #EEEEEE',
-    borderBottom: '2px solid #555555',
-    borderRight: '2px solid #555555',
-  },
-  cellClicked: {
-    ...commonCell,
-    borderTop: '1px solid #555555',
-    borderLeft: '1px solid #555555',
-    borderBottom: '3px solid #CCCCCC',
-    borderRight: '3px solid #CCCCCC',
-  },
-  cell1: {
-    color: '#4286F4'
-  },
-  cell2: {
-    color: '#0BA51B'
-  },
-  cell3: {
-    color: '#d11f1f'
-  },
-  cell4: {
-    color: '#6e25db'
-  },
-  cell5: {
-    color: '#db7325'
-  },
-  cell6: {
-    color: '#e22fb6'
-  },
-  cell7: {
-    color: '#79e22f'
-  },
-  cell8: {
-    color: '#683b39'
-  },
-  row: {
-    display: 'flex',
-    justifyContent: 'center'
+export const grid = css({
+  borderTop: '2px solid #555555',
+  borderLeft: '2px solid #555555',
+  borderBottom: '2px solid #EEEEEE',
+  borderRight: '2px solid #EEEEEE',
+  display: 'inline-block'
+})
+
+export const cell = css({
+  ...commonCell,
+  borderTop: '2px solid #EEEEEE',
+  borderLeft: '2px solid #EEEEEE',
+  borderBottom: '2px solid #555555',
+  borderRight: '2px solid #555555',
+  ':hover': {
+    backgroundColor: '#EEEEEE'
   }
-}
+})
 
-export default style
+export const cellVisible = css({
+  ...commonCell,
+  borderTop: '2px solid #555555',
+  borderLeft: '2px solid #555555',
+  borderBottom: '2px solid #CCCCCC',
+  borderRight: '2px solid #CCCCCC',
+})
+
+export const cell1 = css({
+  color: '#4286F4'
+})
+
+export const cell2 = css({
+  color: '#0BA51B'  
+})
+
+export const cell3 = css({
+  color: '#D11F1F'  
+})
+
+export const cell4 = css({
+  color: '#6E25DB'  
+})
+
+export const cell5 = css({
+  color: '#DB7325'  
+})
+
+export const cell6 = css({
+  color: '#E22FB6'  
+})
+
+export const cell7 = css({
+  color: '#398452'  
+})
+
+export const cell8 = css({
+  color: '#683B39'  
+})
+
+export const row = css({
+  display: 'flex',
+  justifyContent: 'center'
+})
+
+export const bomb = css({
+  fontSize: '20px',
+  left: '2px',
+  position: 'absolute',
+  top: '-1px'
+})
+
+export const value = css({
+  fontSize: '22px',
+  left: '7px',
+  position: 'absolute',
+  top: '0'
+})
