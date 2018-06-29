@@ -10,7 +10,9 @@ const Grid = () => (
       grid.map((row, indexRow) => (
         <div key={ `row-${ indexRow }` } style={ style.row }>
           { row.map((cell, indexCell) => (
-            <div key={ `row-${ indexCell }` } style={ getCellStyle(cell) }></div>
+            <div key={ `row-${ indexCell }` } style={ getCellStyle(cell) }>
+              { renderValue(cell) }
+            </div>
           ))}
         </div>
       ))
@@ -19,7 +21,15 @@ const Grid = () => (
 )
 
 const getCellStyle = (cell) => {
-  return cell.bomb ? style.cellBomb : style.cell
+  let styles = { ...style.cell }
+  styles = { ...styles, ...style[`cell${ cell.dangerLevel }`] }
+  return styles
+}
+
+const renderValue = (cell) => {
+  if (cell.bomb) return '💣'
+  if (cell.dangerLevel > 0) return cell.dangerLevel
+  return ''
 }
 
 export default Grid

@@ -37,14 +37,82 @@ class GameProvider extends React.Component {
       const column = random(columns)
 
       if (!grid[row][column].bomb) {
-        grid[row][column] = { bomb: true, flag: false }
+        grid[row][column] = {
+          ...grid[row][column],
+          bomb: true
+        }
         bombsToInclude = bombsToInclude - 1
       }
     }
+    this.setState({ grid }, () => this.generateDanger(rows, columns, grid))
+  }
+
+  generateDanger = (rows, columns, grid) => {
+    grid.forEach((row, indexRow) => {
+      row.forEach((cell, indexColumn) => {
+        const hasUpperRow = (indexRow - 1) >= 0
+        const hasLowerRow = (indexRow + 1) < rows
+        const hasLeftColumn = (indexColumn - 1) >= 0
+        const hasRightColumn = (indexColumn + 1) < columns
+        
+        cell.dangerLevel = this.calculateDangerLevel(grid, indexRow, indexColumn, hasUpperRow, hasLowerRow, hasLeftColumn, hasRightColumn)
+      })
+    })
+
     this.setState({ grid })
   }
 
-  initCell = () => ({ bomb: false, flag: false })
+  calculateDangerLevel = (grid, indexRow, indexColumn, hasUpperRow, hasLowerRow, hasLeftColumn, hasRightColumn) => {
+    // The positions are in the shape:
+    // 1 2 3
+    // 4 x 5
+    // 6 7 8
+    let dangerLevel = 0
+
+    // Position 1
+    if (hasUpperRow && hasLeftColumn) {
+      if (grid[indexRow - 1][indexColumn - 1].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    // Position 2
+    if (hasUpperRow) {
+      if (grid[indexRow - 1][indexColumn].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    // Position 3
+    if (hasUpperRow && hasRightColumn) {
+      if (grid[indexRow - 1][indexColumn + 1].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    // Position 4
+    if (hasLeftColumn) {
+      if (grid[indexRow][indexColumn - 1].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    // Position 5
+    if (hasRightColumn) {
+      if (grid[indexRow][indexColumn + 1].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    // Position 6
+    if (hasLowerRow && hasLeftColumn) {
+      if (grid[indexRow + 1][indexColumn - 1].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    // Position 7
+    if (hasLowerRow) {
+      if (grid[indexRow + 1][indexColumn].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    // Position 8
+    if (hasLowerRow && hasRightColumn) {
+      if (grid[indexRow + 1][indexColumn + 1].bomb) dangerLevel = dangerLevel + 1
+    }
+
+    return dangerLevel
+  }
+
+  initCell = () => ({ bomb: false, flag: false, dangerLevel: 0 })
   
   getGridSize = (level) => {
     if (level === 'Beginner') return { rows: 9, columns: 9 }
