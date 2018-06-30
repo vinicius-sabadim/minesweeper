@@ -116,7 +116,7 @@ class GameProvider extends React.Component {
   initCell = (id) => ({
     id,
     hasBomb: false,
-    flag: false,
+    hasFlag: false,
     dangerLevel: 0,
     isVisible: false
   })
@@ -142,6 +142,7 @@ class GameProvider extends React.Component {
 
   cellClicked = (clickedCell) => {
     if (clickedCell.isVisible) return
+    if (clickedCell.hasFlag) return
 
     const newGrid = this.state.grid.map((row) => {
       return row.map((cell) => {
@@ -156,13 +157,32 @@ class GameProvider extends React.Component {
     this.setState({ grid: newGrid })
   }
 
+  toggleFlag = (clickedCell, event) => {
+    event.preventDefault()
+
+    if (clickedCell.isVisible) return
+
+    const newGrid = this.state.grid.map((row) => {
+      return row.map((cell) => {
+        if (clickedCell.id === cell.id) return ({
+          ...cell,
+          hasFlag: !cell.hasFlag
+        })
+        return cell
+      })
+    })
+
+    this.setState({ grid: newGrid })
+  }
+
   render = () => {
     return (
       <GameContext.Provider value={{
         changeLevel: this.changeLevel,
         cellClicked: this.cellClicked,
         grid: this.state.grid,
-        selectedLevel: this.state.selectedLevel
+        selectedLevel: this.state.selectedLevel,
+        toggleFlag: this.toggleFlag
       }}>
         { this.props.children }
       </GameContext.Provider>

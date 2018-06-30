@@ -39,6 +39,14 @@ export const cellVisible = css({
   borderRight: '2px solid #CCCCCC',
 })
 
+export const cellFlag = css({
+  ...commonCell,
+  borderTop: '2px solid #EEEEEE',
+  borderLeft: '2px solid #EEEEEE',
+  borderBottom: '2px solid #555555',
+  borderRight: '2px solid #555555'
+})
+
 export const cell1 = css({
   color: '#4286F4'
 })
@@ -76,9 +84,9 @@ export const row = css({
   justifyContent: 'center'
 })
 
-export const bomb = css({
+export const emoji = css({
   fontSize: '20px',
-  left: '2px',
+  left: '4px',
   position: 'absolute',
   top: '-1px'
 })
