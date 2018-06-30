@@ -31,18 +31,18 @@ class GameProvider extends React.Component {
   }
 
   generateBombs = (bombs, rows, columns, grid) => {
-    let bombsToInclude = bombs
+    let bombsInserted = 0
 
-    while (bombsToInclude > 0) {
+    while (bombsInserted < bombs) {
       const row = random(rows)
       const column = random(columns)
 
-      if (!grid[row][column].bomb) {
+      if (!grid[row][column].hasBomb) {
         grid[row][column] = {
           ...grid[row][column],
           hasBomb: true
         }
-        bombsToInclude = bombsToInclude - 1
+        bombsInserted = bombsInserted + 1
       }
     }
     this.setState({ grid }, () => this.generateDanger(rows, columns, grid))
