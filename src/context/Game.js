@@ -27,7 +27,7 @@ class GameProvider extends React.Component {
   startGrid = (rows, columns) => {
     let id = 0
     return [...Array(rows)]
-      .map((_) => [...Array(columns)].map(() => this.initCell(id++)))
+      .map((_, row) => [...Array(columns)].map((_, column) => this.initCell(id++, row, column)))
   }
 
   generateBombs = (bombs, rows, columns, grid) => {
@@ -113,8 +113,8 @@ class GameProvider extends React.Component {
     return dangerLevel
   }
 
-  initCell = (id) => ({
-    id,
+  initCell = (id, row, column) => ({
+    id, row, column,
     hasBomb: false,
     hasFlag: false,
     dangerLevel: 0,
@@ -144,17 +144,49 @@ class GameProvider extends React.Component {
     if (clickedCell.isVisible) return
     if (clickedCell.hasFlag) return
 
-    const newGrid = this.state.grid.map((row) => {
-      return row.map((cell) => {
-        if (clickedCell.id === cell.id) return ({
-          ...cell,
-          isVisible: true
-        })
-        return cell
-      })
-    })
+    const newGrid = this.updateCell(this.state.grid, clickedCell)
 
     this.setState({ grid: newGrid })
+  }
+
+  updateCell(grid, cell) {
+    grid[cell.row][cell.column] = {
+      ...grid[cell.row][cell.column],
+      isVisible: true
+    }
+
+    if (cell.dangerLevel === 0 && !cell.hasBomb && !cell.isVisible) {
+      // The positions are in the shape:
+      //   1
+      // 2 x 3
+      //   4
+      const hasUpperRow = (cell.row - 1) >= 0
+      const hasLowerRow = (cell.row + 1) < this.state.rows
+      const hasLeftColumn = (cell.column - 1) >= 0
+      const hasRightColumn = (cell.column + 1) < this.state.columns
+
+      // Position 1
+      if (hasUpperRow) {
+        this.updateCell(grid, grid[cell.row - 1][cell.column])
+      }
+
+      // Position 2
+      if (hasLeftColumn) {
+        this.updateCell(grid, grid[cell.row][cell.column - 1])
+      }
+
+      // Position 3
+      if (hasRightColumn) {
+        this.updateCell(grid, grid[cell.row][cell.column + 1])
+      }
+
+      // Position 4
+      if (hasLowerRow) {
+        this.updateCell(grid, grid[cell.row + 1][cell.column])
+      }
+    }
+
+    return grid
   }
 
   toggleFlag = (clickedCell, event) => {
@@ -162,15 +194,13 @@ class GameProvider extends React.Component {
 
     if (clickedCell.isVisible) return
 
-    const newGrid = this.state.grid.map((row) => {
-      return row.map((cell) => {
-        if (clickedCell.id === cell.id) return ({
-          ...cell,
-          hasFlag: !cell.hasFlag
-        })
-        return cell
-      })
-    })
+    const newGrid = this.state.grid
+    const cell = newGrid[clickedCell.row][clickedCell.column]
+    
+    newGrid[clickedCell.row][clickedCell.column] = {
+      ...cell,
+      hasFlag: !cell.hasFlag
+    }
 
     this.setState({ grid: newGrid })
   }

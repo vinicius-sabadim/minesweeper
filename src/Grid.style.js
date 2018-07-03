@@ -33,6 +33,7 @@ export const cell = css({
 
 export const cellVisible = css({
   ...commonCell,
+  backgroundColor: '#DDDDDD',
   borderTop: '2px solid #555555',
   borderLeft: '2px solid #555555',
   borderBottom: '2px solid #CCCCCC',
