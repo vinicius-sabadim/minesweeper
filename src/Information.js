@@ -6,10 +6,10 @@ class Information extends React.Component {
   render() {
     return (
       <GameConsumer>
-        { ({ bombsRemaining, restartGame }) => (
+        { ({ bombsRemaining, restartGame, time }) => (
           <div>
             <p>Bombs remaining: { bombsRemaining }</p>  
-            <p>Time</p>
+            <p>Time: { time }</p>
 
             <button onClick={ restartGame }>Restart</button>
           </div>

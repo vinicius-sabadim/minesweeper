@@ -10,20 +10,28 @@ class GameProvider extends React.Component {
     bombs: 10,
     bombsRemaining: 10,
     columns: 9,
+    isFirstClick: true,
     isGameOver: false,
     grid: [],
     rows: 9,
-    selectedLevel: 'Beginner'
+    selectedLevel: 'Beginner',
+    time: 0
   }
+
+  timer = () => {}
 
   componentDidMount = () => {
     this.generateGrid()
   }
 
   restartGame = () => {
+    clearInterval(this.timer)
+
     this.setState({
       bombsRemaining: getBombsQuantity(this.state.selectedLevel),
-      isGameOver: false
+      isFirstClick: true,
+      isGameOver: false,
+      time: 0
     })
     this.generateGrid()
   }
@@ -144,6 +152,10 @@ class GameProvider extends React.Component {
   }
 
   cellClicked = (clickedCell) => {
+    if (this.state.isFirstClick && !clickedCell.hasBomb) {
+      this.startTimer()
+    }
+
     if (this.state.isGameOver) return
     if (clickedCell.isVisible) return
     if (clickedCell.hasFlag) return
@@ -257,6 +269,12 @@ class GameProvider extends React.Component {
     this.setState({ bombsRemaining: newBombsRemaining, grid: newGrid })
   }
 
+  startTimer = () => {
+    this.timer = setInterval(() => {
+      this.setState({ time: this.state.time + 1 })
+    }, 1000)
+  }
+
   render = () => {
     return (
       <GameContext.Provider value={{
@@ -267,6 +285,7 @@ class GameProvider extends React.Component {
         isGameOver: this.state.isGameOver,
         restartGame: this.restartGame,
         selectedLevel: this.state.selectedLevel,
+        time: this.state.time,
         toggleFlag: this.toggleFlag
       }}>
         { this.props.children }
