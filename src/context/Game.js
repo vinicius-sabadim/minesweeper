@@ -1,13 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { random } from '../utils'
+import { getBombsQuantity, getGridSize, random } from '../utils'
 
 const GameContext = React.createContext()
 
 class GameProvider extends React.Component {
   state = {
     bombs: 10,
+    bombsRemaining: 10,
     columns: 9,
     isGameOver: false,
     grid: [],
@@ -16,6 +17,14 @@ class GameProvider extends React.Component {
   }
 
   componentDidMount = () => {
+    this.generateGrid()
+  }
+
+  restartGame = () => {
+    this.setState({
+      bombsRemaining: getBombsQuantity(this.state.selectedLevel),
+      isGameOver: false
+    })
     this.generateGrid()
   }
 
@@ -122,24 +131,16 @@ class GameProvider extends React.Component {
     dangerLevel: 0,
     isVisible: false
   })
-  
-  getGridSize = (level) => {
-    if (level === 'Beginner') return { rows: 9, columns: 9 }
-    if (level === 'Intermediate') return { rows: 16, columns: 16 }
-    if (level === 'Expert') return { rows: 16, columns: 30 }
-  }
 
   changeLevel = (selectedLevel) => {
-    const bombs = this.updateBombsQuantity(selectedLevel)
-    const { rows, columns } = this.getGridSize(selectedLevel)
-    
-    this.setState({ bombs, columns, rows, selectedLevel }, this.generateGrid)
-  }
+    this.restartGame()
 
-  updateBombsQuantity = (selectedLevel) => {
-    if (selectedLevel === 'Beginner') return 10
-    if (selectedLevel === 'Intermediate') return 40
-    return 99
+    const bombs = getBombsQuantity(selectedLevel)
+    const { rows, columns } = getGridSize(selectedLevel)
+    
+    this.setState({
+      bombs, bombsRemaining: bombs, columns, rows, selectedLevel
+    }, this.generateGrid)
   }
 
   cellClicked = (clickedCell) => {
@@ -158,7 +159,7 @@ class GameProvider extends React.Component {
     this.setState({ grid: newGrid })
   }
 
-  changeCellToVisible(grid, cell) {
+  changeCellToVisible = (grid, cell) => {
     grid[cell.row][cell.column] = {
       ...grid[cell.row][cell.column],
       isVisible: true
@@ -199,13 +200,13 @@ class GameProvider extends React.Component {
     return grid
   }
 
-  clickedOnBomb(grid, clickedCell) {
+  clickedOnBomb = (grid, clickedCell) => {
     grid[clickedCell.row][clickedCell.column] = {
       ...clickedCell, isVisible: true, explode: true
     }
 
-    grid = grid.map((row, indexRow) => {
-      return row.map((cell, indexColumn) => {
+    grid = grid.map((row) => {
+      return row.map((cell) => {
         if (cell.hasBomb && !cell.explode) {
           return { ...cell, isVisible: true }
         }
@@ -220,25 +221,31 @@ class GameProvider extends React.Component {
     event.preventDefault()
 
     if (clickedCell.isVisible) return
-
+    
     const newGrid = this.state.grid
     const cell = newGrid[clickedCell.row][clickedCell.column]
+    
+    const newBombsRemaining = cell.hasFlag
+      ? this.state.bombsRemaining + 1
+      : this.state.bombsRemaining - 1
 
     newGrid[clickedCell.row][clickedCell.column] = {
       ...cell,
       hasFlag: !cell.hasFlag
     }
 
-    this.setState({ grid: newGrid })
+    this.setState({ bombsRemaining: newBombsRemaining, grid: newGrid })
   }
 
   render = () => {
     return (
       <GameContext.Provider value={{
+        bombsRemaining: this.state.bombsRemaining,
         changeLevel: this.changeLevel,
         cellClicked: this.cellClicked,
         grid: this.state.grid,
         isGameOver: this.state.isGameOver,
+        restartGame: this.restartGame,
         selectedLevel: this.state.selectedLevel,
         toggleFlag: this.toggleFlag
       }}>
