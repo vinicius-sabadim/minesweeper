@@ -9,6 +9,7 @@ class GameProvider extends React.Component {
   state = {
     bombs: 10,
     columns: 9,
+    isGameOver: false,
     grid: [],
     rows: 9,
     selectedLevel: 'Beginner'
@@ -40,7 +41,8 @@ class GameProvider extends React.Component {
       if (!grid[row][column].hasBomb) {
         grid[row][column] = {
           ...grid[row][column],
-          hasBomb: true
+          hasBomb: true,
+          explode: false
         }
         bombsInserted = bombsInserted + 1
       }
@@ -141,20 +143,28 @@ class GameProvider extends React.Component {
   }
 
   cellClicked = (clickedCell) => {
+    if (this.state.isGameOver) return
     if (clickedCell.isVisible) return
     if (clickedCell.hasFlag) return
 
-    const newGrid = this.updateCell(this.state.grid, clickedCell)
+    let newGrid = this.state.grid
+    newGrid = this.changeCellToVisible(this.state.grid, clickedCell)
+
+    if (clickedCell.hasBomb) {
+      this.setState({ isGameOver: true })
+      newGrid = this.clickedOnBomb(newGrid, clickedCell)
+    }
 
     this.setState({ grid: newGrid })
   }
 
-  updateCell(grid, cell) {
+  changeCellToVisible(grid, cell) {
     grid[cell.row][cell.column] = {
       ...grid[cell.row][cell.column],
       isVisible: true
     }
 
+    // Show all the cells without danger level related to this cell.
     if (cell.dangerLevel === 0 && !cell.hasBomb && !cell.isVisible) {
       // The positions are in the shape:
       //   1
@@ -167,24 +177,41 @@ class GameProvider extends React.Component {
 
       // Position 1
       if (hasUpperRow) {
-        this.updateCell(grid, grid[cell.row - 1][cell.column])
+        this.changeCellToVisible(grid, grid[cell.row - 1][cell.column])
       }
 
       // Position 2
       if (hasLeftColumn) {
-        this.updateCell(grid, grid[cell.row][cell.column - 1])
+        this.changeCellToVisible(grid, grid[cell.row][cell.column - 1])
       }
 
       // Position 3
       if (hasRightColumn) {
-        this.updateCell(grid, grid[cell.row][cell.column + 1])
+        this.changeCellToVisible(grid, grid[cell.row][cell.column + 1])
       }
 
       // Position 4
       if (hasLowerRow) {
-        this.updateCell(grid, grid[cell.row + 1][cell.column])
+        this.changeCellToVisible(grid, grid[cell.row + 1][cell.column])
       }
     }
+
+    return grid
+  }
+
+  clickedOnBomb(grid, clickedCell) {
+    grid[clickedCell.row][clickedCell.column] = {
+      ...clickedCell, isVisible: true, explode: true
+    }
+
+    grid = grid.map((row, indexRow) => {
+      return row.map((cell, indexColumn) => {
+        if (cell.hasBomb && !cell.explode) {
+          return { ...cell, isVisible: true }
+        }
+        return cell
+      })
+    })
 
     return grid
   }
@@ -196,7 +223,7 @@ class GameProvider extends React.Component {
 
     const newGrid = this.state.grid
     const cell = newGrid[clickedCell.row][clickedCell.column]
-    
+
     newGrid[clickedCell.row][clickedCell.column] = {
       ...cell,
       hasFlag: !cell.hasFlag
@@ -211,6 +238,7 @@ class GameProvider extends React.Component {
         changeLevel: this.changeLevel,
         cellClicked: this.cellClicked,
         grid: this.state.grid,
+        isGameOver: this.state.isGameOver,
         selectedLevel: this.state.selectedLevel,
         toggleFlag: this.toggleFlag
       }}>

@@ -31,6 +31,14 @@ export const cell = css({
   }
 })
 
+export const cellOver = css({
+  ...commonCell,
+  borderTop: '2px solid #EEEEEE',
+  borderLeft: '2px solid #EEEEEE',
+  borderBottom: '2px solid #555555',
+  borderRight: '2px solid #555555'
+})
+
 export const cellVisible = css({
   ...commonCell,
   backgroundColor: '#DDDDDD',
@@ -38,6 +46,15 @@ export const cellVisible = css({
   borderLeft: '2px solid #555555',
   borderBottom: '2px solid #CCCCCC',
   borderRight: '2px solid #CCCCCC',
+})
+
+export const cellExploded = css({
+  ...commonCell,
+  backgroundColor: '#D11F1F',
+  borderTop: '2px solid #555555',
+  borderLeft: '2px solid #555555',
+  borderBottom: '2px solid #D11F1F',
+  borderRight: '2px solid #D11F1F',
 })
 
 export const cellFlag = css({
