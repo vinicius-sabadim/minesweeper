@@ -50,11 +50,11 @@ export const cellVisible = css({
 
 export const cellExploded = css({
   ...commonCell,
-  backgroundColor: '#D11F1F',
+  backgroundColor: '#F76767',
   borderTop: '2px solid #555555',
   borderLeft: '2px solid #555555',
-  borderBottom: '2px solid #D11F1F',
-  borderRight: '2px solid #D11F1F',
+  borderBottom: '2px solid #F76767',
+  borderRight: '2px solid #F76767',
 })
 
 export const cellFlag = css({

@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import App from './components/App'
 import registerServiceWorker from './registerServiceWorker'
-import GameContext from './context/Game'
+import GameContext from './contexts/Game'
 
 import './index.css'
 

@@ -10,7 +10,7 @@ export const button = css({
   color: '#4286F4',
   cursor: 'pointer',
   fontSize: '16px',
-  marginBottom: '20px',
+  marginBottom: '30px',
   padding: '5px',
   ':hover': {
     backgroundColor: '#4286F4',

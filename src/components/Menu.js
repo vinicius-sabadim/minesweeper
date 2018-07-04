@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { GameConsumer } from './context/Game'
+import { GameConsumer } from '../contexts/Game'
 
 import style from './Menu.style'
 

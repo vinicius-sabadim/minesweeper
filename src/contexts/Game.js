@@ -25,7 +25,7 @@ class GameProvider extends React.Component {
   }
 
   restartGame = () => {
-    clearInterval(this.timer)
+    this.stopTimer()
 
     this.setState({
       bombsRemaining: getBombsQuantity(this.state.selectedLevel),
@@ -233,6 +233,8 @@ class GameProvider extends React.Component {
   }
 
   clickedOnBomb = (grid, clickedCell) => {
+    this.stopTimer()
+    
     grid[clickedCell.row][clickedCell.column] = {
       ...clickedCell, isVisible: true, explode: true
     }
@@ -273,6 +275,12 @@ class GameProvider extends React.Component {
     this.timer = setInterval(() => {
       this.setState({ time: this.state.time + 1 })
     }, 1000)
+
+    this.setState({ isFirstClick: false })
+  }
+
+  stopTimer = () => {
+    clearInterval(this.timer)
   }
 
   render = () => {

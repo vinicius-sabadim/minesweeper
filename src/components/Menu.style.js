@@ -9,7 +9,7 @@ const style = {
     display: 'flex',
     listStyle: 'none',
     justifyContent: 'center',
-    margin: '30px'
+    margin: '20px'
   },
   listItem: {
     ...commonListItem

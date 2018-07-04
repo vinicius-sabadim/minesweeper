@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { GameConsumer } from './context/Game'
+import { GameConsumer } from '../contexts/Game'
 
 import * as styles from './Grid.style'
 
