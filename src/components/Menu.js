@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 
 import { GameConsumer } from '../contexts/Game'
 
-import style from './Menu.style'
+import * as styles from './Menu.style'
 
 const Menu = () => (
   <GameConsumer>
     { ({ changeLevel, selectedLevel }) => (
-      <ul style={ style.menu }>
+      <ul className={ styles.menu }>
         { ['Beginner', 'Intermediate', 'Expert'].map((level) => (
           <ListItem
             action={ changeLevel }
@@ -24,7 +24,7 @@ const Menu = () => (
 
 const ListItem = ({ action, level, selectedLevel }) => (
   <li
-    style={ level === selectedLevel ? style.listItemActive : style.listItem }
+    className={ level === selectedLevel ? styles.listItemActive : styles.listItem }
     onClick={ action.bind(this, level) }>{ level }</li>
 )
 

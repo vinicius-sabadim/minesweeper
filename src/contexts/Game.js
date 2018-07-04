@@ -9,9 +9,11 @@ class GameProvider extends React.Component {
   state = {
     bombs: 10,
     bombsRemaining: 10,
+    cellsToDiscover: 71,
     columns: 9,
     isFirstClick: true,
     isGameOver: false,
+    isVictory: false,
     grid: [],
     rows: 9,
     selectedLevel: 'Beginner',
@@ -29,8 +31,10 @@ class GameProvider extends React.Component {
 
     this.setState({
       bombsRemaining: getBombsQuantity(this.state.selectedLevel),
+      cellsToDiscover: (this.state.rows * this.state.columns) - this.state.bombs,
       isFirstClick: true,
       isGameOver: false,
+      isVictory: false,
       time: 0
     })
     this.generateGrid()
@@ -141,22 +145,19 @@ class GameProvider extends React.Component {
   })
 
   changeLevel = (selectedLevel) => {
-    this.restartGame()
+    this.setState({ selectedLevel }, this.restartGame)
 
     const bombs = getBombsQuantity(selectedLevel)
     const { rows, columns } = getGridSize(selectedLevel)
     
-    this.setState({
-      bombs, bombsRemaining: bombs, columns, rows, selectedLevel
-    }, this.generateGrid)
+    this.setState({ bombs, columns, rows }, this.generateGrid)
   }
 
   cellClicked = (clickedCell) => {
-    if (this.state.isFirstClick && !clickedCell.hasBomb) {
-      this.startTimer()
-    }
+    if (this.state.isFirstClick && !clickedCell.hasBomb) this.startTimer()
 
     if (this.state.isGameOver) return
+    if (this.state.isVictory) return
     if (clickedCell.isVisible) return
     if (clickedCell.hasFlag) return
 
@@ -166,9 +167,29 @@ class GameProvider extends React.Component {
     if (clickedCell.hasBomb) {
       this.setState({ isGameOver: true })
       newGrid = this.clickedOnBomb(newGrid, clickedCell)
+    } else {
+      const remainingCellsToDiscover = this.updateCellsToDiscover(newGrid)
+      this.verifyVictory(remainingCellsToDiscover)
     }
 
     this.setState({ grid: newGrid })
+  }
+
+  updateCellsToDiscover = (grid) => {
+    let newCellsToDiscover = this.state.cellsToDiscover
+    grid.forEach((row) => {
+      row.forEach((cell) => {
+        if (cell.isVisible) newCellsToDiscover = newCellsToDiscover - 1
+      })
+    })
+    return newCellsToDiscover
+  }
+
+  verifyVictory = (cells) => {
+    if (cells === 0) {
+      this.stopTimer()
+      this.setState({ isVictory: true })
+    }
   }
 
   changeCellToVisible = (grid, cell) => {
@@ -234,7 +255,7 @@ class GameProvider extends React.Component {
 
   clickedOnBomb = (grid, clickedCell) => {
     this.stopTimer()
-    
+
     grid[clickedCell.row][clickedCell.column] = {
       ...clickedCell, isVisible: true, explode: true
     }
@@ -291,6 +312,7 @@ class GameProvider extends React.Component {
         cellClicked: this.cellClicked,
         grid: this.state.grid,
         isGameOver: this.state.isGameOver,
+        isVictory: this.state.isVictory,
         restartGame: this.restartGame,
         selectedLevel: this.state.selectedLevel,
         time: this.state.time,

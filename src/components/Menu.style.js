@@ -1,23 +1,22 @@
+import { css } from 'glamor'
+
 const commonListItem = {
   borderBottom: '2px solid #FFFFFF',
   cursor: 'pointer',
   padding: '10px'
 }
 
-const style = {
-  menu: {
-    display: 'flex',
-    listStyle: 'none',
-    justifyContent: 'center',
-    margin: '20px'
-  },
-  listItem: {
-    ...commonListItem
-  },
-  listItemActive: {
-    ...commonListItem,
-    borderBottom: '2px solid #CCCCCC'
-  }
-}
+export const menu = css({
+  display: 'flex',
+  listStyle: 'none',
+  justifyContent: 'center'
+})
 
-export default style
+export const listItem = css({
+  ...commonListItem
+})
+
+export const listItemActive = css({
+  ...commonListItem,
+  borderBottom: '2px solid #CCCCCC'
+})
