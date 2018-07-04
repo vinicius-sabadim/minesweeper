@@ -1,13 +1,11 @@
 import { css } from 'glamor'
 
-export const wrapper = css({
-  margin: '0 auto 20px',
-  width: '300px'
+export const container = css({
+  marginRight: '50px'
 })
 
-export const container = css({
-  display: 'flex',
-  justifyContent: 'space-between',
+export const wrapper = css({
+  marginBottom: '30px'
 })
 
 export const info = css({
@@ -16,12 +14,32 @@ export const info = css({
   fontWeight: 'bold'
 })
 
-export const victory = css({
-  alignItems: 'center',
+export const buttonArea = css({
   display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: '30px',
+  width: '130px'
+})
+
+export const button = css({
+  border: '1px solid #AAAAAA',
+  borderRadius: '5px',
+  color: '#AAAAAA',
+  cursor: 'pointer',
+  fontSize: '16px',
+  height: '30px',
+  padding: '5px',
+  ':hover': {
+    backgroundColor: '#AAAAAA',
+    color: '#FFFFFF'
+  },
+  ':focus': {
+    outline: 'none'
+  }
+})
+
+export const victory = css({
   color: '#4286F4',
   fontSize: '20px',
-  fontWeight: 'bold',
-  height: '60px',
-  justifyContent: 'center'
+  fontWeight: 'bold'
 })
