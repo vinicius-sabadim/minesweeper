@@ -141,6 +141,7 @@ class GameProvider extends React.Component {
     hasBomb: false,
     hasFlag: false,
     dangerLevel: 0,
+    isHovered: false,
     isVisible: false
   })
 
@@ -193,10 +194,7 @@ class GameProvider extends React.Component {
   }
 
   changeCellToVisible = (grid, cell) => {
-    grid[cell.row][cell.column] = {
-      ...grid[cell.row][cell.column],
-      isVisible: true
-    }
+    grid[cell.row][cell.column] = { ...cell, isVisible: true }
 
     // Show all the cells without danger level related to this cell.
     if (cell.dangerLevel === 0 && !cell.hasBomb && !cell.isVisible) {
@@ -292,6 +290,65 @@ class GameProvider extends React.Component {
     this.setState({ bombsRemaining: newBombsRemaining, grid: newGrid })
   }
 
+  toggleHover = (cell) => {
+    const newGrid = this.updateCellHovered(this.state.grid, cell)
+
+    this.setState({ grid: newGrid })
+  }
+  
+  updateCellHovered = (grid, cell) => {
+    const isHovered = !cell.isHovered
+    grid[cell.row][cell.column] = { ...cell, isHovered }
+
+    // TODO: Improve this repetition
+    const hasUpperRow = (cell.row - 1) >= 0
+    const hasLowerRow = (cell.row + 1) < this.state.rows
+    const hasLeftColumn = (cell.column - 1) >= 0
+    const hasRightColumn = (cell.column + 1) < this.state.columns
+
+    // Position 1
+    if (hasUpperRow && hasLeftColumn) {
+      grid[cell.row - 1][cell.column - 1].isHovered = isHovered
+    }
+
+    // Position 2
+    if (hasUpperRow) {
+      grid[cell.row - 1][cell.column].isHovered = isHovered
+    }
+
+    // Position 3
+    if (hasUpperRow && hasRightColumn) {
+      grid[cell.row - 1][cell.column + 1].isHovered = isHovered
+    }
+
+    // Position 4
+    if (hasLeftColumn) {
+      grid[cell.row][cell.column - 1].isHovered = isHovered
+    }
+
+    // Position 5
+    if (hasRightColumn) {
+      grid[cell.row][cell.column + 1].isHovered = isHovered
+    }
+
+    // Position 6
+    if (hasLowerRow && hasLeftColumn) {
+      grid[cell.row + 1][cell.column - 1].isHovered = isHovered
+    }
+
+    // Position 7
+    if (hasLowerRow) {
+      grid[cell.row + 1][cell.column].isHovered = isHovered
+    }
+
+    // Position 8
+    if (hasLowerRow && hasRightColumn) {
+      grid[cell.row + 1][cell.column + 1].isHovered = isHovered
+    }
+
+    return grid
+  }
+
   startTimer = () => {
     this.timer = setInterval(() => {
       this.setState({ time: this.state.time + 1 })
@@ -316,7 +373,8 @@ class GameProvider extends React.Component {
         restartGame: this.restartGame,
         selectedLevel: this.state.selectedLevel,
         time: this.state.time,
-        toggleFlag: this.toggleFlag
+        toggleFlag: this.toggleFlag,
+        toggleHover: this.toggleHover
       }}>
         { this.props.children }
       </GameContext.Provider>

@@ -48,6 +48,10 @@ export const cellVisible = css({
   borderRight: '2px solid #CCCCCC',
 })
 
+export const cellHovered = css({
+  backgroundColor: '#FCCCCC'
+})
+
 export const cellExploded = css({
   ...commonCell,
   backgroundColor: '#F76767',
