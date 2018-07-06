@@ -74,19 +74,19 @@ export const cell2 = css({
 })
 
 export const cell3 = css({
-  color: '#D11F1F'  
-})
-
-export const cell4 = css({
   color: '#6E25DB'  
 })
 
-export const cell5 = css({
+export const cell4 = css({
   color: '#DB7325'  
 })
 
-export const cell6 = css({
+export const cell5 = css({
   color: '#E22FB6'  
+})
+
+export const cell6 = css({
+  color: '#D11F1F'
 })
 
 export const cell7 = css({
