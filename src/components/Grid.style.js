@@ -2,7 +2,7 @@ import { css } from 'glamor'
 
 const commonCell = {
   alignItems: 'center',
-  backgroundColor: '#CCCCCC',
+  backgroundColor: '#DDDDDD',
   cursor: 'pointer',
   display: 'flex',
   fontWeight: 'bold',
@@ -41,7 +41,7 @@ export const cellOver = css({
 
 export const cellVisible = css({
   ...commonCell,
-  backgroundColor: '#DDDDDD',
+  backgroundColor: '#CCCCCC',
   borderTop: '2px solid #555555',
   borderLeft: '2px solid #555555',
   borderBottom: '2px solid #CCCCCC',
