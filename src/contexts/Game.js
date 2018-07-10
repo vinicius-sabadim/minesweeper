@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import { getBombsQuantity, getGridSize, random } from '../utils'
+import * as utils from '../utils'
 
 const GameContext = React.createContext()
 
@@ -22,136 +22,38 @@ class GameProvider extends React.Component {
 
   timer = () => {}
 
-  componentDidMount = () => {
-    this.generateGrid()
-  }
+  componentDidMount = () => this.startGrid()
 
+  startGrid = () => {
+    const { columns, rows, bombs } = this.state
+    let newGrid = utils.generateGrid(rows, columns)
+    newGrid = utils.generateBombs(newGrid, rows, columns, bombs)
+    newGrid = utils.generateDanger(newGrid)
+
+    this.setState({ grid: newGrid })
+  }
+  
   restartGame = () => {
     this.stopTimer()
 
     this.setState({
-      bombsRemaining: getBombsQuantity(this.state.selectedLevel),
+      bombsRemaining: utils.getBombsQuantity(this.state.selectedLevel),
       cellsToDiscover: (this.state.rows * this.state.columns) - this.state.bombs,
       isFirstClick: true,
       isGameOver: false,
       isVictory: false,
       time: 0
     })
-    this.generateGrid()
+    this.startGrid()
   }
-
-  generateGrid = () => {
-    const { bombs, columns, rows } = this.state
-    const grid = this.startGrid(this.state.rows, this.state.columns)
-    this.setState({ grid }, () => this.generateBombs(bombs, rows, columns, grid))
-  }
-
-  startGrid = (rows, columns) => {
-    let id = 0
-    return [...Array(rows)]
-      .map((_, row) => [...Array(columns)].map((_, column) => this.initCell(id++, row, column)))
-  }
-
-  generateBombs = (bombs, rows, columns, grid) => {
-    let bombsInserted = 0
-
-    while (bombsInserted < bombs) {
-      const row = random(rows)
-      const column = random(columns)
-
-      if (!grid[row][column].hasBomb) {
-        grid[row][column] = {
-          ...grid[row][column],
-          hasBomb: true,
-          explode: false
-        }
-        bombsInserted = bombsInserted + 1
-      }
-    }
-    this.setState({ grid }, () => this.generateDanger(rows, columns, grid))
-  }
-
-  generateDanger = (rows, columns, grid) => {
-    grid.forEach((row, indexRow) => {
-      row.forEach((cell, indexColumn) => {
-        const hasUpperRow = (indexRow - 1) >= 0
-        const hasLowerRow = (indexRow + 1) < rows
-        const hasLeftColumn = (indexColumn - 1) >= 0
-        const hasRightColumn = (indexColumn + 1) < columns
-        
-        cell.dangerLevel = this.calculateDangerLevel(grid, indexRow, indexColumn, hasUpperRow, hasLowerRow, hasLeftColumn, hasRightColumn)
-      })
-    })
-
-    this.setState({ grid })
-  }
-
-  calculateDangerLevel = (grid, indexRow, indexColumn, hasUpperRow, hasLowerRow, hasLeftColumn, hasRightColumn) => {
-    // The positions are in the shape:
-    // 1 2 3
-    // 4 x 5
-    // 6 7 8
-    let dangerLevel = 0
-
-    // Position 1
-    if (hasUpperRow && hasLeftColumn) {
-      if (grid[indexRow - 1][indexColumn - 1].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    // Position 2
-    if (hasUpperRow) {
-      if (grid[indexRow - 1][indexColumn].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    // Position 3
-    if (hasUpperRow && hasRightColumn) {
-      if (grid[indexRow - 1][indexColumn + 1].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    // Position 4
-    if (hasLeftColumn) {
-      if (grid[indexRow][indexColumn - 1].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    // Position 5
-    if (hasRightColumn) {
-      if (grid[indexRow][indexColumn + 1].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    // Position 6
-    if (hasLowerRow && hasLeftColumn) {
-      if (grid[indexRow + 1][indexColumn - 1].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    // Position 7
-    if (hasLowerRow) {
-      if (grid[indexRow + 1][indexColumn].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    // Position 8
-    if (hasLowerRow && hasRightColumn) {
-      if (grid[indexRow + 1][indexColumn + 1].hasBomb) dangerLevel = dangerLevel + 1
-    }
-
-    return dangerLevel
-  }
-
-  initCell = (id, row, column) => ({
-    id, row, column,
-    hasBomb: false,
-    hasFlag: false,
-    dangerLevel: 0,
-    isHovered: false,
-    isVisible: false
-  })
 
   changeLevel = (selectedLevel) => {
     this.setState({ selectedLevel }, this.restartGame)
 
-    const bombs = getBombsQuantity(selectedLevel)
-    const { rows, columns } = getGridSize(selectedLevel)
+    const bombs = utils.getBombsQuantity(selectedLevel)
+    const { rows, columns } = utils.getGridSize(selectedLevel)
     
-    this.setState({ bombs, columns, rows }, this.generateGrid)
+    this.setState({ bombs, columns, rows }, this.startGrid)
   }
 
   cellClicked = (clickedCell) => {
