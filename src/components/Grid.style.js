@@ -49,7 +49,7 @@ export const cellVisible = css({
 })
 
 export const cellHovered = css({
-  backgroundColor: '#FCCCCC'
+  backgroundColor: '#90FC6F'
 })
 
 export const cellExploded = css({

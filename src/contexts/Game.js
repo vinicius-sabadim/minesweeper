@@ -259,9 +259,7 @@ class GameProvider extends React.Component {
     this.setState({ isFirstClick: false })
   }
 
-  stopTimer = () => {
-    clearInterval(this.timer)
-  }
+  stopTimer = () => clearInterval(this.timer)
 
   render = () => {
     return (
