@@ -25,7 +25,8 @@ export const initCell = (id, row, column) => ({
   hasFlag: false,
   dangerLevel: 0,
   isHovered: false,
-  isVisible: false
+  isVisible: false,
+  neighbors: []
 })
 
 export const generateBombs = (grid, rows, columns, bombs) => {
@@ -48,6 +49,47 @@ export const generateBombs = (grid, rows, columns, bombs) => {
   return grid
 }
 
+export const includeNeighborInformation = (grid) => {
+  grid.forEach((row, indexRow) => {
+    row.forEach((_, indexColumn) => {
+      const cell = grid[indexRow][indexColumn]
+
+      if (hasUpperRow(cell) && hasLeftColumn(cell)) {
+        if (grid[indexRow - 1][indexColumn - 1]) cell.neighbors.push(grid[indexRow - 1][indexColumn - 1].id)
+      }
+    
+      if (hasUpperRow(cell)) {
+        if (grid[indexRow - 1][indexColumn]) cell.neighbors.push(grid[indexRow - 1][indexColumn].id)
+      }
+    
+      if (hasUpperRow(cell) && hasRightColumn(grid, cell)) {
+        if (grid[indexRow - 1][indexColumn + 1]) cell.neighbors.push(grid[indexRow - 1][indexColumn + 1].id)
+      }
+    
+      if (hasLeftColumn(cell)) {
+        if (grid[indexRow][indexColumn - 1]) cell.neighbors.push(grid[indexRow][indexColumn - 1].id)
+      }
+    
+      if (hasRightColumn(grid, cell)) {
+        if (grid[indexRow][indexColumn + 1]) cell.neighbors.push(grid[indexRow][indexColumn + 1].id)
+      }
+    
+      if (hasLowerRow(grid, cell) && hasLeftColumn(cell)) {
+        if (grid[indexRow + 1][indexColumn - 1]) cell.neighbors.push(grid[indexRow + 1][indexColumn - 1].id)
+      }
+    
+      if (hasLowerRow(grid, cell)) {
+        if (grid[indexRow + 1][indexColumn]) cell.neighbors.push(grid[indexRow + 1][indexColumn].id)
+      }
+    
+      if (hasLowerRow(grid, cell) && hasRightColumn(grid, cell)) {
+        if (grid[indexRow + 1][indexColumn + 1]) cell.neighbors.push(grid[indexRow + 1][indexColumn + 1].id)
+      } 
+    })
+  })
+  return grid
+}
+
 export const generateDanger = (grid) => {
   grid.forEach((row) => {
     row.forEach((cell) => {
@@ -59,43 +101,20 @@ export const generateDanger = (grid) => {
 }
 
 export const calculateDangerLevel = (grid, cell) => {
-  const column = cell.column
-  const row = cell.row
   let dangerLevel = 0
 
-  if (hasUpperRow(cell) && hasLeftColumn(cell)) {
-    if (grid[row - 1][column - 1].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
-  if (hasUpperRow(cell)) {
-    if (grid[row - 1][column].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
-  if (hasUpperRow(cell) && hasRightColumn(grid, cell)) {
-    if (grid[row - 1][column + 1].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
-  if (hasLeftColumn(cell)) {
-    if (grid[row][column - 1].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
-  if (hasRightColumn(grid, cell)) {
-    if (grid[row][column + 1].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
-  if (hasLowerRow(grid, cell) && hasLeftColumn(cell)) {
-    if (grid[row + 1][column - 1].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
-  if (hasLowerRow(grid, cell)) {
-    if (grid[row + 1][column].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
-  if (hasLowerRow(grid, cell) && hasRightColumn(grid, cell)) {
-    if (grid[row + 1][column + 1].hasBomb) dangerLevel = dangerLevel + 1
-  }
-
+  cell.neighbors.forEach((item) => {
+    const neighbor = findCellById(grid, item)
+    dangerLevel = neighbor.hasBomb ? dangerLevel + 1 : dangerLevel
+  })
+  
   return dangerLevel
+}
+
+export const findCellById = (grid, id) => {
+  const gridFlatten = [].concat.apply([], grid)
+  const cell = gridFlatten.filter((item) => item.id === id)
+  return cell[0]
 }
 
 export const hasUpperRow = (cell) => {

@@ -42,7 +42,8 @@ describe('utils', () => {
           id: 0,
           isHovered: false,
           isVisible: false,
-          row: 0
+          row: 0,
+          neighbors: []
         }]]
       expect(utils.generateGrid(1, 1)).toEqual(result)
     })

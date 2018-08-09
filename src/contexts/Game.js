@@ -28,6 +28,7 @@ class GameProvider extends React.Component {
     const { columns, rows, bombs } = this.state
     let newGrid = utils.generateGrid(rows, columns)
     newGrid = utils.generateBombs(newGrid, rows, columns, bombs)
+    newGrid = utils.includeNeighborInformation(newGrid)
     newGrid = utils.generateDanger(newGrid)
 
     this.setState({ grid: newGrid })
@@ -100,54 +101,10 @@ class GameProvider extends React.Component {
 
     // Show all the cells without danger level related to this cell.
     if (cell.dangerLevel === 0 && !cell.hasBomb && !cell.isVisible) {
-      // The positions are in the shape:
-      // 1 2 3
-      // 4 x 5
-      // 6 7 8
-      const hasUpperRow = (cell.row - 1) >= 0
-      const hasLowerRow = (cell.row + 1) < this.state.rows
-      const hasLeftColumn = (cell.column - 1) >= 0
-      const hasRightColumn = (cell.column + 1) < this.state.columns
-
-      // Position 1
-      if (hasUpperRow && hasLeftColumn) {
-        this.changeCellToVisible(grid, grid[cell.row - 1][cell.column - 1])
-      }
-
-      // Position 2
-      if (hasUpperRow) {
-        this.changeCellToVisible(grid, grid[cell.row - 1][cell.column])
-      }
-
-      // Position 3
-      if (hasUpperRow && hasRightColumn) {
-        this.changeCellToVisible(grid, grid[cell.row - 1][cell.column + 1])
-      }
-
-      // Position 4
-      if (hasLeftColumn) {
-        this.changeCellToVisible(grid, grid[cell.row][cell.column - 1])
-      }
-
-      // Position 5
-      if (hasRightColumn) {
-        this.changeCellToVisible(grid, grid[cell.row][cell.column + 1])
-      }
-
-      // Position 6
-      if (hasLowerRow && hasLeftColumn) {
-        this.changeCellToVisible(grid, grid[cell.row + 1][cell.column - 1])
-      }
-
-      // Position 7
-      if (hasLowerRow) {
-        this.changeCellToVisible(grid, grid[cell.row + 1][cell.column])
-      }
-
-      // Position 8
-      if (hasLowerRow && hasRightColumn) {
-        this.changeCellToVisible(grid, grid[cell.row + 1][cell.column + 1])
-      }
+      cell.neighbors.forEach((item) => {
+        const neighbor = utils.findCellById(grid, item)
+        this.changeCellToVisible(grid, neighbor)
+      })
     }
 
     return grid
@@ -202,51 +159,10 @@ class GameProvider extends React.Component {
     const isHovered = !cell.isHovered
     grid[cell.row][cell.column] = { ...cell, isHovered }
 
-    // TODO: Improve this repetition
-    const hasUpperRow = (cell.row - 1) >= 0
-    const hasLowerRow = (cell.row + 1) < this.state.rows
-    const hasLeftColumn = (cell.column - 1) >= 0
-    const hasRightColumn = (cell.column + 1) < this.state.columns
-
-    // Position 1
-    if (hasUpperRow && hasLeftColumn) {
-      grid[cell.row - 1][cell.column - 1].isHovered = isHovered
-    }
-
-    // Position 2
-    if (hasUpperRow) {
-      grid[cell.row - 1][cell.column].isHovered = isHovered
-    }
-
-    // Position 3
-    if (hasUpperRow && hasRightColumn) {
-      grid[cell.row - 1][cell.column + 1].isHovered = isHovered
-    }
-
-    // Position 4
-    if (hasLeftColumn) {
-      grid[cell.row][cell.column - 1].isHovered = isHovered
-    }
-
-    // Position 5
-    if (hasRightColumn) {
-      grid[cell.row][cell.column + 1].isHovered = isHovered
-    }
-
-    // Position 6
-    if (hasLowerRow && hasLeftColumn) {
-      grid[cell.row + 1][cell.column - 1].isHovered = isHovered
-    }
-
-    // Position 7
-    if (hasLowerRow) {
-      grid[cell.row + 1][cell.column].isHovered = isHovered
-    }
-
-    // Position 8
-    if (hasLowerRow && hasRightColumn) {
-      grid[cell.row + 1][cell.column + 1].isHovered = isHovered
-    }
+    cell.neighbors.forEach((item) => {
+      const neighbor = utils.findCellById(grid, item)
+      neighbor.isHovered = isHovered
+    }) 
 
     return grid
   }
