@@ -14,14 +14,8 @@ export const info = css({
   fontWeight: 'bold'
 })
 
-export const buttonArea = css({
-  display: 'flex',
-  justifyContent: 'space-between',
-  marginBottom: '30px',
-  width: '130px'
-})
-
 export const button = css({
+  backgroundColor: '#FFFFFF',
   border: '1px solid #AAAAAA',
   borderRadius: '5px',
   color: '#AAAAAA',

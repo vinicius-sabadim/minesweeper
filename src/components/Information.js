@@ -25,11 +25,9 @@ class Information extends React.Component {
               </div>
             </div>
 
-            <div className={styles.buttonArea}>
-              <button className={styles.button} onClick={restartGame}>
-                Restart
-              </button>
-            </div>
+            <button className={styles.button} onClick={restartGame}>
+              Restart
+            </button>
 
             <div className={styles.victory}>{isVictory ? 'Victory' : ''}</div>
           </div>
