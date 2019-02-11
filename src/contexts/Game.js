@@ -46,7 +46,6 @@ class GameProvider extends React.Component {
       isVictory: false,
       time: 0
     })
-
     return new Promise(resolve => {
       this.startGrid().then(() => resolve())
     })
@@ -155,22 +154,16 @@ class GameProvider extends React.Component {
     this.setState({ bombsRemaining: newBombsRemaining, grid: newGrid })
   }
 
-  toggleHover = cell => {
-    const newGrid = this.updateCellHovered(this.state.grid, cell)
-
-    this.setState({ grid: newGrid })
-  }
-
-  updateCellHovered = (grid, cell) => {
-    const isHovered = !cell.isHovered
-    grid[cell.row][cell.column] = { ...cell, isHovered }
+  setHover = (cell, isHovered) => {
+    const newGrid = this.state.grid
+    newGrid[cell.row][cell.column] = { ...cell, isHovered }
 
     cell.neighbors.forEach(item => {
-      const neighbor = utils.findCellById(grid, item)
+      const neighbor = utils.findCellById(newGrid, item)
       neighbor.isHovered = isHovered
     })
 
-    return grid
+    this.setState({ grid: newGrid })
   }
 
   cleanBorders = () => {
@@ -222,7 +215,7 @@ class GameProvider extends React.Component {
           selectedLevel: this.state.selectedLevel,
           time: this.state.time,
           toggleFlag: this.toggleFlag,
-          toggleHover: this.toggleHover
+          setHover: this.setHover
         }}
       >
         {this.props.children}

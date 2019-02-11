@@ -29,7 +29,7 @@ class Information extends React.Component {
             <Button onClick={restartGame}>Restart</Button>
 
             <div className={styles.victory}>
-              {!isVictory ? 'Victory :)' : ''}
+              {isVictory ? 'Victory :)' : ''}
             </div>
 
             <div className={styles.cheatArea}>

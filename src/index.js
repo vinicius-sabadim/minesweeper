@@ -8,4 +8,6 @@ import './index.css'
 ReactDOM.render(
   <GameContext>
     <App />
-  </GameContext>, document.getElementById('root'))
+  </GameContext>,
+  document.getElementById('root')
+)

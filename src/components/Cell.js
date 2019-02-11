@@ -6,15 +6,15 @@ import { GameConsumer } from '../contexts/Game'
 
 const Cell = ({ cell }) => (
   <GameConsumer>
-    {({ isGameOver, cellClicked, toggleFlag, toggleHover }) => (
+    {({ isGameOver, cellClicked, toggleFlag, setHover }) => (
       <div
         className={`${styleIsFilled(cell, isGameOver)}
         ${styleIsHovered(cell)}
         ${styleDanger(cell.dangerLevel)}`}
         onClick={cellClicked.bind(this, cell)}
         onContextMenu={toggleFlag.bind(this, cell)}
-        onMouseEnter={toggleHover.bind(this, cell)}
-        onMouseLeave={toggleHover.bind(this, cell)}
+        onMouseEnter={setHover.bind(this, cell, true)}
+        onMouseLeave={setHover.bind(this, cell, false)}
       >
         <span
           className={cell.hasBomb || cell.hasFlag ? styles.emoji : styles.value}
