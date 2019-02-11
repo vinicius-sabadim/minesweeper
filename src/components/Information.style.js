@@ -35,5 +35,17 @@ export const button = css({
 export const victory = css({
   color: '#4286F4',
   fontSize: '20px',
-  fontWeight: 'bold'
+  fontWeight: 'bold',
+  marginTop: '30px'
+})
+
+export const cheatArea = css({
+  border: '1px solid #BBBBBB',
+  marginTop: '30px',
+  padding: '10px',
+  '> h1': {
+    color: '#555555',
+    fontSize: '20px',
+    marginBottom: '10px'
+  }
 })

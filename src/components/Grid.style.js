@@ -5,5 +5,6 @@ export const grid = css({
   borderLeft: '2px solid #555555',
   borderBottom: '2px solid #EEEEEE',
   borderRight: '2px solid #EEEEEE',
-  display: 'inline-block'
+  display: 'inline-block',
+  height: '100%'
 })

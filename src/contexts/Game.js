@@ -30,8 +30,9 @@ class GameProvider extends React.Component {
     newGrid = utils.generateBombs(newGrid, rows, columns, bombs)
     newGrid = utils.includeNeighborInformation(newGrid)
     newGrid = utils.generateDanger(newGrid)
-
-    this.setState({ grid: newGrid })
+    return new Promise(resolve => {
+      this.setState({ grid: newGrid }, () => resolve())
+    })
   }
 
   restartGame = () => {
@@ -45,7 +46,10 @@ class GameProvider extends React.Component {
       isVictory: false,
       time: 0
     })
-    this.startGrid()
+
+    return new Promise(resolve => {
+      this.startGrid().then(() => resolve())
+    })
   }
 
   changeLevel = selectedLevel => {
@@ -169,6 +173,30 @@ class GameProvider extends React.Component {
     return grid
   }
 
+  cleanBorders = () => {
+    this.restartGame().then(() => {
+      const { columns, grid, rows } = this.state
+      const cellTopLeft = grid[0][0]
+      const cellTopRight = grid[0][columns - 1]
+      const cellBottomLeft = grid[rows - 1][0]
+      const cellBottomRight = grid[rows - 1][columns - 1]
+
+      if (
+        cellTopLeft.hasBomb ||
+        cellTopRight.hasBomb ||
+        cellBottomLeft.hasBomb ||
+        cellBottomRight.hasBomb
+      ) {
+        return this.cleanBorders()
+      }
+
+      this.cellClicked(cellTopLeft)
+      this.cellClicked(cellTopRight)
+      this.cellClicked(cellBottomLeft)
+      this.cellClicked(cellBottomRight)
+    })
+  }
+
   startTimer = () => {
     this.timer = setInterval(() => {
       this.setState({ time: this.state.time + 1 })
@@ -186,6 +214,7 @@ class GameProvider extends React.Component {
           bombsRemaining: this.state.bombsRemaining,
           changeLevel: this.changeLevel,
           cellClicked: this.cellClicked,
+          cleanBorders: this.cleanBorders,
           grid: this.state.grid,
           isGameOver: this.state.isGameOver,
           isVictory: this.state.isVictory,

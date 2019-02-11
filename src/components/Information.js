@@ -1,5 +1,6 @@
 import React from 'react'
 
+import Button from './common/Button'
 import Menu from './Menu'
 import { GameConsumer } from '../contexts/Game'
 
@@ -9,7 +10,7 @@ class Information extends React.Component {
   render() {
     return (
       <GameConsumer>
-        {({ bombsRemaining, isVictory, restartGame, time, undo }) => (
+        {({ bombsRemaining, cleanBorders, isVictory, restartGame, time }) => (
           <div className={styles.container}>
             <Menu />
 
@@ -25,11 +26,16 @@ class Information extends React.Component {
               </div>
             </div>
 
-            <button className={styles.button} onClick={restartGame}>
-              Restart
-            </button>
+            <Button onClick={restartGame}>Restart</Button>
 
-            <div className={styles.victory}>{isVictory ? 'Victory' : ''}</div>
+            <div className={styles.victory}>
+              {!isVictory ? 'Victory :)' : ''}
+            </div>
+
+            <div className={styles.cheatArea}>
+              <h1>Cheat area</h1>
+              <Button onClick={cleanBorders}>Start with clean borders</Button>
+            </div>
           </div>
         )}
       </GameConsumer>
