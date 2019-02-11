@@ -37,7 +37,7 @@ export const cellVisible = css({
   borderTop: '2px solid #555555',
   borderLeft: '2px solid #555555',
   borderBottom: '2px solid #CCCCCC',
-  borderRight: '2px solid #CCCCCC',
+  borderRight: '2px solid #CCCCCC'
 })
 
 export const cellHovered = css({
@@ -50,7 +50,7 @@ export const cellExploded = css({
   borderTop: '2px solid #555555',
   borderLeft: '2px solid #555555',
   borderBottom: '2px solid #F76767',
-  borderRight: '2px solid #F76767',
+  borderRight: '2px solid #F76767'
 })
 
 export const cellFlag = css({
@@ -66,19 +66,19 @@ export const cell1 = css({
 })
 
 export const cell2 = css({
-  color: '#0BA51B'  
+  color: '#0BA51B'
 })
 
 export const cell3 = css({
-  color: '#6E25DB'  
+  color: '#6E25DB'
 })
 
 export const cell4 = css({
-  color: '#DB7325'  
+  color: '#DB7325'
 })
 
 export const cell5 = css({
-  color: '#E22FB6'  
+  color: '#E22FB6'
 })
 
 export const cell6 = css({
@@ -86,11 +86,11 @@ export const cell6 = css({
 })
 
 export const cell7 = css({
-  color: '#398452'  
+  color: '#398452'
 })
 
 export const cell8 = css({
-  color: '#683B39'  
+  color: '#683B39'
 })
 
 export const emoji = css({

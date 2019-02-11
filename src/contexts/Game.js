@@ -33,13 +33,13 @@ class GameProvider extends React.Component {
 
     this.setState({ grid: newGrid })
   }
-  
+
   restartGame = () => {
     this.stopTimer()
 
     this.setState({
       bombsRemaining: utils.getBombsQuantity(this.state.selectedLevel),
-      cellsToDiscover: (this.state.rows * this.state.columns) - this.state.bombs,
+      cellsToDiscover: this.state.rows * this.state.columns - this.state.bombs,
       isFirstClick: true,
       isGameOver: false,
       isVictory: false,
@@ -48,16 +48,16 @@ class GameProvider extends React.Component {
     this.startGrid()
   }
 
-  changeLevel = (selectedLevel) => {
+  changeLevel = selectedLevel => {
     this.setState({ selectedLevel }, this.restartGame)
 
     const bombs = utils.getBombsQuantity(selectedLevel)
     const { rows, columns } = utils.getGridSize(selectedLevel)
-    
+
     this.setState({ bombs, columns, rows }, this.startGrid)
   }
 
-  cellClicked = (clickedCell) => {
+  cellClicked = clickedCell => {
     if (this.state.isFirstClick && !clickedCell.hasBomb) this.startTimer()
 
     if (this.state.isGameOver) return
@@ -79,17 +79,17 @@ class GameProvider extends React.Component {
     this.setState({ grid: newGrid })
   }
 
-  updateCellsToDiscover = (grid) => {
+  updateCellsToDiscover = grid => {
     let newCellsToDiscover = this.state.cellsToDiscover
-    grid.forEach((row) => {
-      row.forEach((cell) => {
+    grid.forEach(row => {
+      row.forEach(cell => {
         if (cell.isVisible) newCellsToDiscover = newCellsToDiscover - 1
       })
     })
     return newCellsToDiscover
   }
 
-  verifyVictory = (cells) => {
+  verifyVictory = cells => {
     if (cells === 0) {
       this.stopTimer()
       this.setState({ isVictory: true })
@@ -101,7 +101,7 @@ class GameProvider extends React.Component {
 
     // Show all the cells without danger level related to this cell.
     if (cell.dangerLevel === 0 && !cell.hasBomb && !cell.isVisible) {
-      cell.neighbors.forEach((item) => {
+      cell.neighbors.forEach(item => {
         const neighbor = utils.findCellById(grid, item)
         this.changeCellToVisible(grid, neighbor)
       })
@@ -114,11 +114,13 @@ class GameProvider extends React.Component {
     this.stopTimer()
 
     grid[clickedCell.row][clickedCell.column] = {
-      ...clickedCell, isVisible: true, explode: true
+      ...clickedCell,
+      isVisible: true,
+      explode: true
     }
 
-    grid = grid.map((row) => {
-      return row.map((cell) => {
+    grid = grid.map(row => {
+      return row.map(cell => {
         if (cell.hasBomb && !cell.explode) {
           return { ...cell, isVisible: true }
         }
@@ -133,10 +135,10 @@ class GameProvider extends React.Component {
     event.preventDefault()
 
     if (clickedCell.isVisible) return
-    
+
     const newGrid = this.state.grid
     const cell = newGrid[clickedCell.row][clickedCell.column]
-    
+
     const newBombsRemaining = cell.hasFlag
       ? this.state.bombsRemaining + 1
       : this.state.bombsRemaining - 1
@@ -149,20 +151,20 @@ class GameProvider extends React.Component {
     this.setState({ bombsRemaining: newBombsRemaining, grid: newGrid })
   }
 
-  toggleHover = (cell) => {
+  toggleHover = cell => {
     const newGrid = this.updateCellHovered(this.state.grid, cell)
 
     this.setState({ grid: newGrid })
   }
-  
+
   updateCellHovered = (grid, cell) => {
     const isHovered = !cell.isHovered
     grid[cell.row][cell.column] = { ...cell, isHovered }
 
-    cell.neighbors.forEach((item) => {
+    cell.neighbors.forEach(item => {
       const neighbor = utils.findCellById(grid, item)
       neighbor.isHovered = isHovered
-    }) 
+    })
 
     return grid
   }
@@ -179,20 +181,22 @@ class GameProvider extends React.Component {
 
   render = () => {
     return (
-      <GameContext.Provider value={{
-        bombsRemaining: this.state.bombsRemaining,
-        changeLevel: this.changeLevel,
-        cellClicked: this.cellClicked,
-        grid: this.state.grid,
-        isGameOver: this.state.isGameOver,
-        isVictory: this.state.isVictory,
-        restartGame: this.restartGame,
-        selectedLevel: this.state.selectedLevel,
-        time: this.state.time,
-        toggleFlag: this.toggleFlag,
-        toggleHover: this.toggleHover
-      }}>
-        { this.props.children }
+      <GameContext.Provider
+        value={{
+          bombsRemaining: this.state.bombsRemaining,
+          changeLevel: this.changeLevel,
+          cellClicked: this.cellClicked,
+          grid: this.state.grid,
+          isGameOver: this.state.isGameOver,
+          isVictory: this.state.isVictory,
+          restartGame: this.restartGame,
+          selectedLevel: this.state.selectedLevel,
+          time: this.state.time,
+          toggleFlag: this.toggleFlag,
+          toggleHover: this.toggleHover
+        }}
+      >
+        {this.props.children}
       </GameContext.Provider>
     )
   }
