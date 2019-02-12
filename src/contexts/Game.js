@@ -12,6 +12,18 @@ const gameStatus = {
   victory: 3
 }
 
+const gridSize = {
+  Beginner: { rows: 9, columns: 9 },
+  Intermediate: { rows: 16, columns: 16 },
+  Expert: { rows: 16, columns: 30 }
+}
+
+const bombsQuantity = {
+  Beginner: 10,
+  Intermediate: 40,
+  Expert: 99
+}
+
 class GameProvider extends React.Component {
   state = {
     bombs: 10,
@@ -33,34 +45,28 @@ class GameProvider extends React.Component {
     const { columns, rows, bombs } = this.state
     let newGrid = utils.generateGrid(rows, columns)
     newGrid = utils.generateBombs(newGrid, rows, columns, bombs)
-    newGrid = utils.includeNeighborInformation(newGrid)
+    newGrid = utils.includeNeighborInformation(newGrid, rows, columns)
     newGrid = utils.generateDanger(newGrid)
-    return new Promise(resolve => {
-      this.setState({ grid: newGrid }, () => resolve())
-    })
+    this.setState({ grid: newGrid })
   }
 
   restartGame = () => {
     this.stopTimer()
 
     this.setState({
-      bombsRemaining: utils.getBombsQuantity(this.state.selectedLevel),
+      bombsRemaining: bombsQuantity[this.state.selectedLevel],
       cellsToDiscover: this.state.rows * this.state.columns - this.state.bombs,
       status: gameStatus.ready,
       time: 0
     })
-    return new Promise(resolve => {
-      this.startGrid().then(() => {
-        resolve()
-      })
-    })
+    this.startGrid()
   }
 
   changeLevel = selectedLevel => {
     this.setState({ selectedLevel }, this.restartGame)
 
-    const bombs = utils.getBombsQuantity(selectedLevel)
-    const { rows, columns } = utils.getGridSize(selectedLevel)
+    const bombs = bombsQuantity[selectedLevel]
+    const { rows, columns } = gridSize[selectedLevel]
 
     this.setState({ bombs, columns, rows }, this.startGrid)
   }
@@ -91,11 +97,9 @@ class GameProvider extends React.Component {
 
   updateCellsToDiscover = grid => {
     let newCellsToDiscover = this.state.cellsToDiscover
-    grid.forEach(row => {
-      row.forEach(cell => {
-        if (cell.isVisible) newCellsToDiscover = newCellsToDiscover - 1
-      })
-    })
+    for (const cell of grid) {
+      if (cell.isVisible) newCellsToDiscover = newCellsToDiscover - 1
+    }
     return newCellsToDiscover
   }
 
@@ -107,13 +111,12 @@ class GameProvider extends React.Component {
   }
 
   changeCellToVisible = (grid, cell) => {
-    grid[cell.row][cell.column] = { ...cell, isVisible: true }
+    grid[cell.id] = { ...cell, isVisible: true }
 
     // Show all the cells without danger level related to this cell.
     if (cell.dangerLevel === 0 && !cell.hasBomb && !cell.isVisible) {
-      cell.neighbors.forEach(item => {
-        const neighbor = utils.findCellById(grid, item)
-        this.changeCellToVisible(grid, neighbor)
+      cell.neighbors.forEach(neighbor => {
+        this.changeCellToVisible(grid, grid[neighbor])
       })
     }
 
@@ -123,19 +126,17 @@ class GameProvider extends React.Component {
   clickedOnBomb = (grid, clickedCell) => {
     this.stopTimer()
 
-    grid[clickedCell.row][clickedCell.column] = {
+    grid[clickedCell.id] = {
       ...clickedCell,
       isVisible: true,
       explode: true
     }
 
-    grid = grid.map(row => {
-      return row.map(cell => {
-        if (cell.hasBomb && !cell.explode) {
-          return { ...cell, isVisible: true }
-        }
-        return cell
-      })
+    grid = grid.map(cell => {
+      if (cell.hasBomb && !cell.explode) {
+        return { ...cell, isVisible: true }
+      }
+      return cell
     })
 
     return grid
@@ -147,13 +148,13 @@ class GameProvider extends React.Component {
     if (clickedCell.isVisible) return
 
     const newGrid = this.state.grid
-    const cell = newGrid[clickedCell.row][clickedCell.column]
+    const cell = newGrid[clickedCell.id]
 
     const newBombsRemaining = cell.hasFlag
       ? this.state.bombsRemaining + 1
       : this.state.bombsRemaining - 1
 
-    newGrid[clickedCell.row][clickedCell.column] = {
+    newGrid[clickedCell.id] = {
       ...cell,
       hasFlag: !cell.hasFlag
     }
@@ -163,38 +164,37 @@ class GameProvider extends React.Component {
 
   setHover = (cell, isHovered) => {
     const newGrid = this.state.grid
-    newGrid[cell.row][cell.column] = { ...cell, isHovered }
+    newGrid[cell.id] = { ...cell, isHovered }
 
-    cell.neighbors.forEach(item => {
-      const neighbor = utils.findCellById(newGrid, item)
-      neighbor.isHovered = isHovered
+    cell.neighbors.forEach(neighbor => {
+      newGrid[neighbor].isHovered = isHovered
     })
 
     this.setState({ grid: newGrid })
   }
 
   cleanBorders = () => {
-    this.restartGame().then(() => {
-      const { columns, grid, rows } = this.state
-      const cellTopLeft = grid[0][0]
-      const cellTopRight = grid[0][columns - 1]
-      const cellBottomLeft = grid[rows - 1][0]
-      const cellBottomRight = grid[rows - 1][columns - 1]
+    this.restartGame()
 
-      if (
-        cellTopLeft.hasBomb ||
-        cellTopRight.hasBomb ||
-        cellBottomLeft.hasBomb ||
-        cellBottomRight.hasBomb
-      ) {
-        return this.cleanBorders()
-      }
+    const { columns, grid, rows } = this.state
+    const cellTopLeft = grid[0]
+    const cellTopRight = grid[columns - 1]
+    const cellBottomLeft = grid[(rows - 1) * columns]
+    const cellBottomRight = grid[grid.length - 1]
 
-      this.cellClicked(cellTopLeft)
-      this.cellClicked(cellTopRight)
-      this.cellClicked(cellBottomLeft)
-      this.cellClicked(cellBottomRight)
-    })
+    if (
+      cellTopLeft.hasBomb ||
+      cellTopRight.hasBomb ||
+      cellBottomLeft.hasBomb ||
+      cellBottomRight.hasBomb
+    ) {
+      return this.cleanBorders()
+    }
+
+    this.cellClicked(cellTopLeft)
+    this.cellClicked(cellTopRight)
+    this.cellClicked(cellBottomLeft)
+    this.cellClicked(cellBottomRight)
   }
 
   startTimer = () => {

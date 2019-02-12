@@ -7,7 +7,7 @@ import { GameConsumer } from '../contexts/Game'
 const Cell = ({ cell }) => (
   <GameConsumer>
     {({ isGameOver, cellClicked, toggleFlag, setHover }) => (
-      <div
+      <td
         className={`${styleIsFilled(cell, isGameOver)}
         ${styleIsHovered(cell)}
         ${styleDanger(cell.dangerLevel)}`}
@@ -21,7 +21,7 @@ const Cell = ({ cell }) => (
         >
           {renderValue(cell)}
         </span>
-      </div>
+      </td>
     )}
   </GameConsumer>
 )
