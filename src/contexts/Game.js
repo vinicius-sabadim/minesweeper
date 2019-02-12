@@ -5,17 +5,22 @@ import * as utils from '../utils'
 
 const GameContext = React.createContext()
 
+const gameStatus = {
+  ready: 0,
+  playing: 1,
+  gameover: 2,
+  victory: 3
+}
+
 class GameProvider extends React.Component {
   state = {
     bombs: 10,
     bombsRemaining: 10,
     cellsToDiscover: 71,
     columns: 9,
-    isFirstClick: true,
-    isGameOver: false,
-    isVictory: false,
     grid: [],
     rows: 9,
+    status: gameStatus.ready,
     selectedLevel: 'Beginner',
     time: 0
   }
@@ -41,13 +46,13 @@ class GameProvider extends React.Component {
     this.setState({
       bombsRemaining: utils.getBombsQuantity(this.state.selectedLevel),
       cellsToDiscover: this.state.rows * this.state.columns - this.state.bombs,
-      isFirstClick: true,
-      isGameOver: false,
-      isVictory: false,
+      status: gameStatus.ready,
       time: 0
     })
     return new Promise(resolve => {
-      this.startGrid().then(() => resolve())
+      this.startGrid().then(() => {
+        resolve()
+      })
     })
   }
 
@@ -61,10 +66,12 @@ class GameProvider extends React.Component {
   }
 
   cellClicked = clickedCell => {
-    if (this.state.isFirstClick && !clickedCell.hasBomb) this.startTimer()
+    const { status } = this.state
+    if (status !== gameStatus.ready && status !== gameStatus.playing) return
+    if (status === gameStatus.ready && !clickedCell.hasBomb) {
+      this.startTimer()
+    }
 
-    if (this.state.isGameOver) return
-    if (this.state.isVictory) return
     if (clickedCell.isVisible) return
     if (clickedCell.hasFlag) return
 
@@ -72,7 +79,7 @@ class GameProvider extends React.Component {
     newGrid = this.changeCellToVisible(this.state.grid, clickedCell)
 
     if (clickedCell.hasBomb) {
-      this.setState({ isGameOver: true })
+      this.setState({ status: gameStatus.gameover })
       newGrid = this.clickedOnBomb(newGrid, clickedCell)
     } else {
       const remainingCellsToDiscover = this.updateCellsToDiscover(newGrid)
@@ -95,7 +102,7 @@ class GameProvider extends React.Component {
   verifyVictory = cells => {
     if (cells === 0) {
       this.stopTimer()
-      this.setState({ isVictory: true })
+      this.setState({ status: gameStatus.victory })
     }
   }
 
@@ -195,7 +202,7 @@ class GameProvider extends React.Component {
       this.setState({ time: this.state.time + 1 })
     }, 1000)
 
-    this.setState({ isFirstClick: false })
+    this.setState({ status: gameStatus.playing })
   }
 
   stopTimer = () => clearInterval(this.timer)
@@ -209,8 +216,8 @@ class GameProvider extends React.Component {
           cellClicked: this.cellClicked,
           cleanBorders: this.cleanBorders,
           grid: this.state.grid,
-          isGameOver: this.state.isGameOver,
-          isVictory: this.state.isVictory,
+          isGameOver: this.state.status === gameStatus.gameover,
+          isVictory: this.state.status === gameStatus.victory,
           restartGame: this.restartGame,
           selectedLevel: this.state.selectedLevel,
           time: this.state.time,
