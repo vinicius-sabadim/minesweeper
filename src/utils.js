@@ -35,11 +35,11 @@ export const generateGrid = (rows, columns) => {
   return grid
 }
 
-export const generateBombs = (grid, rows, columns, bombs) => {
+export const generateBombs = (grid, rows, columns, bombs, cleanBorders) => {
   let bombsInserted = 0
 
   while (bombsInserted < bombs) {
-    const id = random(rows * columns)
+    const id = getId(grid, rows, columns, cleanBorders)
     if (!grid[id].hasBomb) {
       grid[id] = {
         ...grid[id],
@@ -50,6 +50,29 @@ export const generateBombs = (grid, rows, columns, bombs) => {
     }
   }
   return grid
+}
+
+const getId = (grid, rows, columns, cleanBorders) => {
+  const total = rows * columns
+  if (cleanBorders) {
+    const blockedIds = [
+      grid[0].id,
+      grid[columns - 1].id,
+      grid[(rows - 1) * columns].id,
+      grid[grid.length - 1].id
+    ]
+    let allGood = false
+    let id = null
+    while (!allGood) {
+      id = random(total)
+      if (!blockedIds.includes(id)) {
+        allGood = true
+      }
+    }
+    return id
+  } else {
+    return random(total)
+  }
 }
 
 export const includeNeighborInformation = (grid, rows, columns) => {

@@ -11,7 +11,7 @@ const Cell = ({ cell }) => (
         className={`${styleIsFilled(cell, isGameOver)}
         ${styleIsHovered(cell)}
         ${styleDanger(cell.dangerLevel)}`}
-        onClick={cellClicked.bind(this, cell)}
+        onClick={cellClicked.bind(this, [cell])}
         onContextMenu={toggleFlag.bind(this, cell)}
         onMouseEnter={setHover.bind(this, cell, true)}
         onMouseLeave={setHover.bind(this, cell, false)}
