@@ -7,11 +7,11 @@ import { GameConsumer } from '../contexts/Game'
 const Cell = ({ cell }) => (
   <GameConsumer>
     {({ isGameOver, cellClicked, toggleFlag, setHover }) => (
-      <div
+      <td
         className={`${styleIsFilled(cell, isGameOver)}
         ${styleIsHovered(cell)}
         ${styleDanger(cell.dangerLevel)}`}
-        onClick={cellClicked.bind(this, cell)}
+        onClick={cellClicked.bind(this, [cell])}
         onContextMenu={toggleFlag.bind(this, cell)}
         onMouseEnter={setHover.bind(this, cell, true)}
         onMouseLeave={setHover.bind(this, cell, false)}
@@ -21,7 +21,7 @@ const Cell = ({ cell }) => (
         >
           {renderValue(cell)}
         </span>
-      </div>
+      </td>
     )}
   </GameConsumer>
 )
