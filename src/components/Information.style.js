@@ -49,3 +49,11 @@ export const cheatArea = css({
     marginBottom: '10px'
   }
 })
+
+export const checked = css({
+  display: 'block',
+  marginBottom: '10px',
+  '> input': {
+    marginRight: '5px'
+  }
+})

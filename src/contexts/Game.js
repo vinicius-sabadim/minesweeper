@@ -30,7 +30,8 @@ class GameProvider extends React.Component {
     bombsRemaining: 10,
     cellsToDiscover: 71,
     cheat: {
-      cleanBorders: false
+      cleanBorders: false,
+      hover: false
     },
     columns: 9,
     grid: [],
@@ -70,7 +71,8 @@ class GameProvider extends React.Component {
         cellsToDiscover:
           this.state.rows * this.state.columns - this.state.bombs,
         cheat: {
-          cleanBorders: false
+          cleanBorders: false,
+          hover: false
         },
         status: gameStatus.ready,
         time: 0
@@ -187,6 +189,8 @@ class GameProvider extends React.Component {
   }
 
   setHover = (cell, isHovered) => {
+    if (!this.state.cheat.hover) return
+
     const newGrid = this.state.grid
     newGrid[cell.id] = { ...cell, isHovered }
 
@@ -222,6 +226,16 @@ class GameProvider extends React.Component {
     )
   }
 
+  toggleCheatHover = () => {
+    const { cheat } = this.state
+    this.setState({
+      cheat: {
+        ...cheat,
+        hover: !cheat.hover
+      }
+    })
+  }
+
   startTimer = () => {
     this.timer = setInterval(() => {
       this.setState({ time: this.state.time + 1 })
@@ -239,6 +253,7 @@ class GameProvider extends React.Component {
           bombsRemaining: this.state.bombsRemaining,
           changeLevel: this.changeLevel,
           cellClicked: this.cellClicked,
+          cheat: this.state.cheat,
           cleanBorders: this.cleanBorders,
           grid: this.state.grid,
           isGameOver: this.state.status === gameStatus.gameover,
@@ -246,6 +261,7 @@ class GameProvider extends React.Component {
           restartGame: this.restartGame,
           selectedLevel: this.state.selectedLevel,
           time: this.state.time,
+          toggleCheatHover: this.toggleCheatHover,
           toggleFlag: this.toggleFlag,
           setHover: this.setHover
         }}

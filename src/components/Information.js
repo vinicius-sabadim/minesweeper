@@ -10,7 +10,15 @@ class Information extends React.Component {
   render() {
     return (
       <GameConsumer>
-        {({ bombsRemaining, cleanBorders, isVictory, restartGame, time }) => (
+        {({
+          bombsRemaining,
+          cheat,
+          cleanBorders,
+          isVictory,
+          restartGame,
+          time,
+          toggleCheatHover
+        }) => (
           <div className={styles.container}>
             <Menu />
 
@@ -34,6 +42,14 @@ class Information extends React.Component {
 
             <div className={styles.cheatArea}>
               <h1>Cheat area</h1>
+              <label className={styles.checked}>
+                <input
+                  type="checkbox"
+                  onChange={toggleCheatHover}
+                  checked={cheat.hover}
+                />
+                Show hover
+              </label>
               <Button onClick={cleanBorders}>Start with clean borders</Button>
             </div>
           </div>
