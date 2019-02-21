@@ -9,6 +9,7 @@ const commonCell = {
   height: '25px',
   justifyContent: 'center',
   position: 'relative',
+  userSelect: 'none',
   width: '25px'
 }
 
@@ -94,6 +95,7 @@ export const cell8 = css({
 })
 
 export const emoji = css({
+  color: '#000000',
   fontSize: '20px',
   left: '4px',
   position: 'absolute',

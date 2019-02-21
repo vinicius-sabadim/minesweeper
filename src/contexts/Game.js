@@ -71,8 +71,8 @@ class GameProvider extends React.Component {
         cellsToDiscover:
           this.state.rows * this.state.columns - this.state.bombs,
         cheat: {
-          cleanBorders: false,
-          hover: false
+          ...this.state.cheat,
+          cleanBorders: false
         },
         status: gameStatus.ready,
         time: 0
@@ -205,6 +205,7 @@ class GameProvider extends React.Component {
     this.setState(
       {
         cheat: {
+          ...this.state.cheat,
           cleanBorders: true
         }
       },
