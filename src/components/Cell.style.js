@@ -6,11 +6,13 @@ const commonCell = {
   cursor: 'pointer',
   display: 'flex',
   fontWeight: 'bold',
-  height: '25px',
+  height: '2rem',
   justifyContent: 'center',
+  maxHeight: '40px',
+  maxWidth: '40px',
   position: 'relative',
   userSelect: 'none',
-  width: '25px'
+  width: '2rem'
 }
 
 export const cell = css({
@@ -95,16 +97,11 @@ export const cell8 = css({
 })
 
 export const emoji = css({
-  color: '#000000',
+  color: 'red',
   fontSize: '20px',
-  left: '4px',
-  position: 'absolute',
-  top: '-1px'
+  height: '1.5rem'
 })
 
 export const value = css({
-  fontSize: '22px',
-  left: '7px',
-  position: 'absolute',
-  top: '0'
+  fontSize: '22px'
 })
