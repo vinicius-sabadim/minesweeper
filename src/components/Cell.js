@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 
-import styles from './Cell.style'
 import GameContext from '../contexts/Game'
+
+import styles from './Cell.style'
 
 const Cell = ({ cell }) => {
   const { isGameOver, cellClicked, toggleFlag, setHover } = useContext(
@@ -33,9 +34,11 @@ const styleIsFilled = (cell, isGameOver) => {
   if (cell.isVisible) return styles.cellVisible
   return isGameOver ? styles.cellOver : styles.cell
 }
+
 const styleIsHovered = cell => {
   if (cell.isHovered) return styles.cellHovered
 }
+
 const styleDanger = dangerLevel => styles[`cell${dangerLevel}`]
 
 const renderValue = cell => {

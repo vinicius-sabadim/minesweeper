@@ -45,7 +45,7 @@ export class GameProvider extends React.Component {
 
   componentDidMount = () => this.startGrid()
 
-  startGrid = () => {
+  startGrid = async () => {
     const { columns, rows, bombs, cheat } = this.state
     let newGrid = utils.generateGrid(rows, columns)
     newGrid = utils.generateBombs(
@@ -57,28 +57,23 @@ export class GameProvider extends React.Component {
     )
     newGrid = utils.includeNeighborInformation(newGrid, rows, columns)
     newGrid = utils.generateDanger(newGrid)
-    return new Promise(resolve => {
-      this.setState({ grid: newGrid }, () => resolve())
-    })
+    return await this.setState({ grid: newGrid })
   }
 
-  restartGame = () => {
-    return new Promise(resolve => {
-      this.stopTimer()
+  restartGame = async () => {
+    this.stopTimer()
 
-      this.setState({
-        bombsRemaining: bombsQuantity[this.state.selectedLevel],
-        cellsToDiscover:
-          this.state.rows * this.state.columns - this.state.bombs,
-        cheat: {
-          ...this.state.cheat,
-          cleanBorders: false
-        },
-        status: gameStatus.ready,
-        time: 0
-      })
-      this.startGrid().then(() => resolve())
+    this.setState({
+      bombsRemaining: bombsQuantity[this.state.selectedLevel],
+      cellsToDiscover: this.state.rows * this.state.columns - this.state.bombs,
+      cheat: {
+        ...this.state.cheat,
+        cleanBorders: false
+      },
+      status: gameStatus.ready,
+      time: 0
     })
+    return await this.startGrid()
   }
 
   changeLevel = selectedLevel => {
@@ -209,21 +204,22 @@ export class GameProvider extends React.Component {
           cleanBorders: true
         }
       },
-      () =>
-        this.restartGame().then(() => {
-          const { columns, grid, rows } = this.state
-          const cellTopLeft = grid[0]
-          const cellTopRight = grid[columns - 1]
-          const cellBottomLeft = grid[(rows - 1) * columns]
-          const cellBottomRight = grid[grid.length - 1]
+      async () => {
+        await this.restartGame()
 
-          this.cellClicked([
-            cellTopLeft,
-            cellTopRight,
-            cellBottomLeft,
-            cellBottomRight
-          ])
-        })
+        const { columns, grid, rows } = this.state
+        const cellTopLeft = grid[0]
+        const cellTopRight = grid[columns - 1]
+        const cellBottomLeft = grid[(rows - 1) * columns]
+        const cellBottomRight = grid[grid.length - 1]
+
+        this.cellClicked([
+          cellTopLeft,
+          cellTopRight,
+          cellBottomLeft,
+          cellBottomRight
+        ])
+      }
     )
   }
 
