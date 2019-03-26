@@ -1,11 +1,11 @@
 import React from 'react'
 
-import * as styles from './Button.style'
+import styles from './Button.style'
 
-const componentName = props => (
+const Button = props => (
   <button className={styles.button} {...props}>
     {props.children}
   </button>
 )
 
-export default componentName
+export default Button
