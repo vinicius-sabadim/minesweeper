@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 import * as utils from '../utils'
 
@@ -267,10 +266,6 @@ export class GameProvider extends React.Component {
       </GameContext.Provider>
     )
   }
-}
-
-GameProvider.propTypes = {
-  children: PropTypes.object.isRequired
 }
 
 export default GameContext
