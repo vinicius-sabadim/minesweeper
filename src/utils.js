@@ -1,3 +1,10 @@
+export const gameStatus = {
+  ready: 0,
+  playing: 1,
+  gameover: 2,
+  victory: 3
+}
+
 export const random = value => Math.floor(Math.random() * value)
 
 export const groupBy = (list, keyGetter) => {
@@ -28,7 +35,8 @@ export const generateGrid = (rows, columns) => {
       dangerLevel: 0,
       isHovered: false,
       isVisible: false,
-      neighbors: []
+      neighbors: [],
+      probability: null
     })
   }
 
@@ -125,6 +133,16 @@ export const generateDanger = grid => {
   return grid
 }
 
+export const generateBombChance = (grid, cell) => {
+  let bombChance = 1
+  cell.neighbors.forEach(neighbor => {
+    if (grid[neighbor].hasBomb) {
+    }
+  })
+
+  console.log(bombChance)
+}
+
 export const calculateDangerLevel = (grid, cell) => {
   let dangerLevel = 0
 
@@ -149,4 +167,12 @@ export const hasLeftColumn = cell => {
 
 export const hasRightColumn = (cell, columns) => {
   return cell.column + 1 < columns
+}
+
+export const clickAllowed = status => {
+  return status === gameStatus.ready || status === gameStatus.playing
+}
+
+export const hasInteraction = cell => {
+  return cell.isVisible || cell.hasFlag
 }

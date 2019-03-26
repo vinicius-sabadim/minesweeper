@@ -9,6 +9,7 @@ import styles from './Information.style'
 const Information = () => {
   const {
     bombsRemaining,
+    calculateBombChance,
     cheat,
     cleanBorders,
     isVictory,
@@ -47,6 +48,7 @@ const Information = () => {
           />
           Show hover
         </label>
+        <Button onClick={calculateBombChance}>Calculate bomb chance</Button>
         <Button onClick={cleanBorders}>Start with clean borders</Button>
       </div>
     </div>

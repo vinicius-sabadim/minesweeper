@@ -4,12 +4,7 @@ import * as utils from '../utils'
 
 const GameContext = React.createContext()
 
-const gameStatus = {
-  ready: 0,
-  playing: 1,
-  gameover: 2,
-  victory: 3
-}
+const gameStatus = utils.gameStatus
 
 const gridSize = {
   Beginner: { rows: 9, columns: 9 },
@@ -69,7 +64,7 @@ export class GameProvider extends React.Component {
         ...this.state.cheat,
         cleanBorders: false
       },
-      status: gameStatus.ready,
+      status: utils.gameStatus.ready,
       time: 0
     })
     return await this.startGrid()
@@ -86,12 +81,13 @@ export class GameProvider extends React.Component {
 
   cellClicked = clickedCells => {
     const { status } = this.state
-    if (status !== gameStatus.ready && status !== gameStatus.playing) return
+    if (!utils.clickAllowed(status)) return
 
     let newGrid = this.state.grid
-    for (const cell of clickedCells) {
-      if (cell.isVisible) return
-      if (cell.hasFlag) return
+    const cellsWithoutInteraction = clickedCells.filter(
+      cell => !utils.hasInteraction(cell)
+    )
+    for (const cell of cellsWithoutInteraction) {
       newGrid = this.changeCellToVisible(this.state.grid, cell)
 
       if (cell.hasBomb) {
@@ -152,14 +148,12 @@ export class GameProvider extends React.Component {
       explode: true
     }
 
-    grid = grid.map(cell => {
+    return grid.map(cell => {
       if (cell.hasBomb && !cell.explode) {
         return { ...cell, isVisible: true }
       }
       return cell
     })
-
-    return grid
   }
 
   toggleFlag = (clickedCell, event) => {
@@ -184,7 +178,6 @@ export class GameProvider extends React.Component {
 
   setHover = (cell, isHovered) => {
     if (!this.state.cheat.hover) return
-
     const newGrid = this.state.grid
     newGrid[cell.id] = { ...cell, isHovered }
 
@@ -192,6 +185,39 @@ export class GameProvider extends React.Component {
       newGrid[neighbor].isHovered = isHovered
     })
 
+    this.setState({ grid: newGrid })
+  }
+
+  calculateBombChance = () => {
+    let newGrid = this.state.grid
+    const cells = newGrid.filter(cell => cell.isVisible && cell.dangerLevel > 0)
+
+    cells.forEach(cell => {
+      const { neighbors } = cell
+      let bombsToBeFound =
+        cell.dangerLevel -
+        neighbors.filter(neighbor => newGrid[neighbor].hasFlag).length
+      const neighborsNotVisible = neighbors.filter(
+        neighbor => !newGrid[neighbor].isVisible && !newGrid[neighbor].hasFlag
+      )
+      let sum = neighborsNotVisible.reduce((acc, neighbor) => {
+        const { probability } = newGrid[neighbor]
+        return probability ? (acc += probability) : acc
+      }, 0)
+
+      const probabilityDifferent = neighborsNotVisible.filter(
+        neighbor => newGrid[neighbor].probability !== 1
+      ).length
+
+      neighborsNotVisible.forEach(neighbor => {
+        const probability = (bombsToBeFound - sum) / probabilityDifferent
+        newGrid[neighbor].probability = probability
+        // newGrid[neighbor].probability =
+        //   newGrid[neighbor].probability < probability
+        //     ? probability
+        //     : newGrid[neighbor].probability
+      })
+    })
     this.setState({ grid: newGrid })
   }
 
@@ -247,6 +273,7 @@ export class GameProvider extends React.Component {
       <GameContext.Provider
         value={{
           bombsRemaining: this.state.bombsRemaining,
+          calculateBombChance: this.calculateBombChance,
           changeLevel: this.changeLevel,
           cellClicked: this.cellClicked,
           cheat: this.state.cheat,

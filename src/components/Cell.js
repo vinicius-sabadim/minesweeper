@@ -35,6 +35,9 @@ const Cell = ({ cell }) => {
       >
         {renderValue(cell)}
       </span>
+      <span style={{ position: 'absolute', top: 0, left: 0, fontSize: 10 }}>
+        {cell.probability && cell.probability.toFixed(2)}
+      </span>
     </td>
   )
 }
