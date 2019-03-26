@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import Cell from './Cell'
 
-import * as styles from './Row.style'
+import styles from './Row.style'
 
 const Row = ({ row }) => (
   <tr className={styles.row}>

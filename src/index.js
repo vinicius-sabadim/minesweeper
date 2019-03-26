@@ -1,13 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './components/App'
-import GameContext from './contexts/Game'
+import { GameProvider } from './contexts/Game'
 
 import './index.css'
 
 ReactDOM.render(
-  <GameContext>
+  <GameProvider>
     <App />
-  </GameContext>,
+  </GameProvider>,
   document.getElementById('root')
 )

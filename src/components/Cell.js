@@ -1,30 +1,31 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 
-import * as styles from './Cell.style'
-import { GameConsumer } from '../contexts/Game'
+import styles from './Cell.style'
+import GameContext from '../contexts/Game'
 
-const Cell = ({ cell }) => (
-  <GameConsumer>
-    {({ isGameOver, cellClicked, toggleFlag, setHover }) => (
-      <td
-        className={`${styleIsFilled(cell, isGameOver)}
+const Cell = ({ cell }) => {
+  const { isGameOver, cellClicked, toggleFlag, setHover } = useContext(
+    GameContext
+  )
+  return (
+    <td
+      className={`${styleIsFilled(cell, isGameOver)}
         ${styleIsHovered(cell)}
         ${styleDanger(cell.dangerLevel)}`}
-        onClick={cellClicked.bind(this, [cell])}
-        onContextMenu={toggleFlag.bind(this, cell)}
-        onMouseEnter={setHover.bind(this, cell, true)}
-        onMouseLeave={setHover.bind(this, cell, false)}
+      onClick={cellClicked.bind(this, [cell])}
+      onContextMenu={toggleFlag.bind(this, cell)}
+      onMouseEnter={setHover.bind(this, cell, true)}
+      onMouseLeave={setHover.bind(this, cell, false)}
+    >
+      <span
+        className={cell.hasBomb || cell.hasFlag ? styles.emoji : styles.value}
       >
-        <span
-          className={cell.hasBomb || cell.hasFlag ? styles.emoji : styles.value}
-        >
-          {renderValue(cell)}
-        </span>
-      </td>
-    )}
-  </GameConsumer>
-)
+        {renderValue(cell)}
+      </span>
+    </td>
+  )
+}
 
 const styleIsFilled = (cell, isGameOver) => {
   if (cell.hasFlag) return styles.cellFlag

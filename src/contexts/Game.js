@@ -24,7 +24,7 @@ const bombsQuantity = {
   Expert: 99
 }
 
-class GameProvider extends React.Component {
+export class GameProvider extends React.Component {
   state = {
     bombs: 10,
     bombsRemaining: 10,
@@ -277,5 +277,4 @@ GameProvider.propTypes = {
   children: PropTypes.object.isRequired
 }
 
-export default GameProvider
-export const GameConsumer = GameContext.Consumer
+export default GameContext

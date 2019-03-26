@@ -1,19 +1,21 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import Row from './Row'
-import { GameConsumer } from '../contexts/Game'
+import GameContext from '../contexts/Game'
 
 import { groupBy } from '../utils'
 
-import * as styles from './Grid.style'
+import styles from './Grid.style'
 
-const Grid = () => (
-  <table className={styles.grid}>
-    <tbody>
-      <GameConsumer>{({ grid }) => renderGrid(grid)}</GameConsumer>
-    </tbody>
-  </table>
-)
+const Grid = () => {
+  const { grid } = useContext(GameContext)
+
+  return (
+    <table className={styles.grid}>
+      <tbody>{renderGrid(grid)}</tbody>
+    </table>
+  )
+}
 
 const renderGrid = grid => {
   const grouped = groupBy(grid, item => item.row)

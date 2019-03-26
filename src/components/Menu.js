@@ -1,26 +1,26 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
 
-import { GameConsumer } from '../contexts/Game'
+import GameContext from '../contexts/Game'
 
-import * as styles from './Menu.style'
+import styles from './Menu.style'
 
-const Menu = () => (
-  <GameConsumer>
-    {({ changeLevel, selectedLevel }) => (
-      <ul className={styles.menu}>
-        {['Beginner', 'Intermediate', 'Expert'].map(level => (
-          <ListItem
-            action={changeLevel}
-            key={level}
-            level={level}
-            selectedLevel={selectedLevel}
-          />
-        ))}
-      </ul>
-    )}
-  </GameConsumer>
-)
+const Menu = () => {
+  const { changeLevel, selectedLevel } = useContext(GameContext)
+
+  return (
+    <ul className={styles.menu}>
+      {['Beginner', 'Intermediate', 'Expert'].map(level => (
+        <ListItem
+          action={changeLevel}
+          key={level}
+          level={level}
+          selectedLevel={selectedLevel}
+        />
+      ))}
+    </ul>
+  )
+}
 
 const ListItem = ({ action, level, selectedLevel }) => (
   <li
