@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
+import { css } from 'glamor'
 
 import GameContext from '../contexts/Game'
 
@@ -24,9 +25,10 @@ const Menu = () => {
 
 const ListItem = ({ action, level, selectedLevel }) => (
   <li
-    className={
-      level === selectedLevel ? styles.listItemActive : styles.listItem
-    }
+    {...css(
+      styles.listItem,
+      level === selectedLevel ? styles.listItemActive : ''
+    )}
     onClick={action.bind(this, level)}
   >
     {level}

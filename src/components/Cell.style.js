@@ -59,30 +59,6 @@ export default {
     borderBottom: '2px solid #555555',
     borderRight: '2px solid #555555'
   }),
-  cell1: css({
-    color: '#4286F4'
-  }),
-  cell2: css({
-    color: '#0BA51B'
-  }),
-  cell3: css({
-    color: '#6E25DB'
-  }),
-  cell4: css({
-    color: '#DB7325'
-  }),
-  cell5: css({
-    color: '#E22FB6'
-  }),
-  cell6: css({
-    color: '#D11F1F'
-  }),
-  cell7: css({
-    color: '#398452'
-  }),
-  cell8: css({
-    color: '#683B39'
-  }),
   emoji: css({
     color: 'red',
     fontSize: '20px',

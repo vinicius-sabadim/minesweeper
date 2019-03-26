@@ -5,15 +5,26 @@ import GameContext from '../contexts/Game'
 
 import styles from './Cell.style'
 
+const colors = [
+  '',
+  '#4286F4',
+  '#0BA51B',
+  '#6E25DB',
+  '#DB7325',
+  '#E22FB6',
+  '#D11F1F',
+  '#398452',
+  '#683B39'
+]
+
 const Cell = ({ cell }) => {
   const { isGameOver, cellClicked, toggleFlag, setHover } = useContext(
     GameContext
   )
   return (
     <td
-      className={`${styleIsFilled(cell, isGameOver)}
-        ${styleIsHovered(cell)}
-        ${styleDanger(cell.dangerLevel)}`}
+      className={`${styleIsFilled(cell, isGameOver)} ${styleIsHovered(cell)}`}
+      style={{ color: colors[cell.dangerLevel] }}
       onClick={cellClicked.bind(this, [cell])}
       onContextMenu={toggleFlag.bind(this, cell)}
       onMouseEnter={setHover.bind(this, cell, true)}
@@ -38,8 +49,6 @@ const styleIsFilled = (cell, isGameOver) => {
 const styleIsHovered = cell => {
   if (cell.isHovered) return styles.cellHovered
 }
-
-const styleDanger = dangerLevel => styles[`cell${dangerLevel}`]
 
 const renderValue = cell => {
   if (cell.hasFlag) return '🚩'
