@@ -44,12 +44,5 @@ export default {
       fontSize: '20px',
       marginBottom: '10px'
     }
-  }),
-  checked: css({
-    display: 'block',
-    marginBottom: '10px',
-    '> input': {
-      marginRight: '5px'
-    }
   })
 }

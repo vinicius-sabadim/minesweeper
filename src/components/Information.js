@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 
+import Checkbox from './common/Checkbox'
 import Button from './common/Button'
 import Menu from './Menu'
 import GameContext from '../contexts/Game'
@@ -39,14 +40,11 @@ const Information = () => {
 
       <div className={styles.cheatArea}>
         <h1>Cheat area</h1>
-        <label className={styles.checked}>
-          <input
-            type="checkbox"
-            onChange={toggleCheatHover}
-            checked={cheat.hover}
-          />
-          Show hover
-        </label>
+        <Checkbox
+          checked={cheat.hover}
+          label="Show hover"
+          onChange={toggleCheatHover}
+        />
         <Button onClick={cleanBorders}>Start with clean borders</Button>
       </div>
     </div>
