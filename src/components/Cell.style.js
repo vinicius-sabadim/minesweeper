@@ -59,6 +59,9 @@ export default {
     borderBottom: '2px solid #555555',
     borderRight: '2px solid #555555'
   }),
+  cellNavigation: css({
+    backgroundColor: 'linen'
+  }),
   emoji: css({
     color: 'red',
     fontSize: '20px',

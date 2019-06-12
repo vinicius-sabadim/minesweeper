@@ -47,6 +47,24 @@ const Information = () => {
         />
         <Button onClick={cleanBorders}>Start with clean borders</Button>
       </div>
+
+      <div className={styles.hints}>
+        <p>
+          <strong>Arrow keys</strong>: move
+        </p>
+        <p>
+          <strong>Enter</strong>: click cell
+        </p>
+        <p>
+          <strong>F</strong>: toggle flag
+        </p>
+        <p>
+          <strong>R</strong>: restart
+        </p>
+        <p>
+          <strong>C</strong>: start with clean border
+        </p>
+      </div>
     </div>
   )
 }

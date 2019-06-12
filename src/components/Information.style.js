@@ -44,5 +44,9 @@ export default {
       fontSize: '20px',
       marginBottom: '10px'
     }
+  }),
+  hints: css({
+    lineHeight: '24px',
+    padding: '20px'
   })
 }

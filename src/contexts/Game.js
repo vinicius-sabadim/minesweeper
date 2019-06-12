@@ -34,6 +34,7 @@ export class GameProvider extends React.Component {
     },
     columns: 9,
     grid: [],
+    navigateUsingArrow: 0,
     rows: 9,
     status: gameStatus.ready,
     selectedLevel: 'Beginner',
@@ -59,7 +60,10 @@ export class GameProvider extends React.Component {
     return await this.setState({ grid: newGrid })
   }
 
-  restartGame = async () => {
+  restartGame = async event => {
+    // Prevents the trigger using the "enter" key
+    if (event && event.detail === 0) return
+
     this.stopTimer()
 
     this.setState({
@@ -69,6 +73,7 @@ export class GameProvider extends React.Component {
         ...this.state.cheat,
         cleanBorders: false
       },
+      navigateUsingArrow: 0,
       status: gameStatus.ready,
       time: 0
     })
@@ -163,7 +168,9 @@ export class GameProvider extends React.Component {
   }
 
   toggleFlag = (clickedCell, event) => {
-    event.preventDefault()
+    if (event) {
+      event.preventDefault()
+    }
 
     if (clickedCell.isVisible) return
 
@@ -195,7 +202,10 @@ export class GameProvider extends React.Component {
     this.setState({ grid: newGrid })
   }
 
-  cleanBorders = () => {
+  cleanBorders = event => {
+    // Prevents the trigger using the "enter" key
+    if (event && event.detail === 0) return
+
     this.setState(
       {
         cheat: {
@@ -232,6 +242,37 @@ export class GameProvider extends React.Component {
     })
   }
 
+  changeNavigation = action => {
+    const id = this.state.navigateUsingArrow
+    const newGrid = this.state.grid
+    const activeCell = newGrid[id]
+    const { columns, rows } = this.state
+
+    let newNavigateUsingArrow = id
+
+    if (action === 'down' && utils.hasLowerRow(activeCell, rows)) {
+      newNavigateUsingArrow = id + columns
+    } else if (action === 'up' && utils.hasUpperRow(activeCell)) {
+      newNavigateUsingArrow = id - columns
+    } else if (action === 'left' && utils.hasLeftColumn(activeCell)) {
+      newNavigateUsingArrow = id - 1
+    } else if (
+      action === 'right' &&
+      utils.hasRightColumn(activeCell, columns)
+    ) {
+      newNavigateUsingArrow = id + 1
+    } else if (action === 'trigger') {
+      this.cellClicked([activeCell])
+    } else if (action === 'flag') {
+      this.toggleFlag(activeCell)
+    } else if (action === 'restart') {
+      this.restartGame()
+    } else if (action === 'clean') {
+      this.cleanBorders()
+    }
+    this.setState({ navigateUsingArrow: newNavigateUsingArrow })
+  }
+
   startTimer = () => {
     this.timer = setInterval(() => {
       this.setState({ time: this.state.time + 1 })
@@ -248,12 +289,14 @@ export class GameProvider extends React.Component {
         value={{
           bombsRemaining: this.state.bombsRemaining,
           changeLevel: this.changeLevel,
+          changeNavigation: this.changeNavigation,
           cellClicked: this.cellClicked,
           cheat: this.state.cheat,
           cleanBorders: this.cleanBorders,
           grid: this.state.grid,
           isGameOver: this.state.status === gameStatus.gameover,
           isVictory: this.state.status === gameStatus.victory,
+          navigateUsingArrow: this.state.navigateUsingArrow,
           restartGame: this.restartGame,
           selectedLevel: this.state.selectedLevel,
           time: this.state.time,
