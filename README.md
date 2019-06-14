@@ -1,3 +1,3 @@
 ## Minesweeper
 
-This is a project for me to put some React concepts in practice.
+My implementation of the Minesweeper game. In this version I put navigation controls using the keyboard and some experiments for cheat the game :)

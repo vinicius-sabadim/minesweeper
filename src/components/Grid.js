@@ -13,6 +13,7 @@ const keys = {
   ArrowLeft: 'left',
   ArrowRight: 'right',
   Enter: 'trigger',
+  a: 'trigger',
   f: 'flag',
   r: 'restart',
   c: 'clean'
