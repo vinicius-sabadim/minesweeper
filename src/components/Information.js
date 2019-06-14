@@ -53,7 +53,7 @@ const Information = () => {
           <strong>Arrow keys</strong>: move
         </p>
         <p>
-          <strong>Enter</strong>: click cell
+          <strong>Enter / A</strong>: click cell
         </p>
         <p>
           <strong>F</strong>: toggle flag
