@@ -116,3 +116,25 @@ describe('generateDanger', () => {
     expect(cell.dangerLevel).toBe(3)
   })
 })
+
+describe('isVictory', () => {
+  test('should return true when is a victory condition', () => {
+    const grid = fn.generateGrid(3, 3)
+    const gridWithBombs = fn.generateBombs(grid, 3, 3, 5, true)
+    gridWithBombs[0].isVisible = true
+    gridWithBombs[2].isVisible = true
+    gridWithBombs[6].isVisible = true
+    gridWithBombs[8].isVisible = true
+    const isVictory = fn.isVictory(gridWithBombs, 5)
+
+    expect(isVictory).toBe(true)
+  })
+
+  test('should return false when is NOT a victory condition', () => {
+    const grid = fn.generateGrid(3, 3)
+    const gridWithBombs = fn.generateBombs(grid, 3, 3, 5, true)
+    const isVictory = fn.isVictory(gridWithBombs, 5)
+
+    expect(isVictory).toBe(false)
+  })
+})

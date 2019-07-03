@@ -1,3 +1,5 @@
+import { gameStatus } from '../constants'
+
 export const hasUpperRow = cell => {
   return cell.row - 1 >= 0
 }
@@ -12,4 +14,12 @@ export const hasLeftColumn = cell => {
 
 export const hasRightColumn = (cell, columns) => {
   return cell.column + 1 < columns
+}
+
+export const shouldStartTimer = (status, cells) => {
+  if (status !== gameStatus.READY) return false
+  if (cells.length > 1) return true
+  if (!cells[0].hasBomb) return true
+
+  return false
 }

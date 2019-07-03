@@ -22,3 +22,9 @@ export const bombsQuantity = {
   INTERMEDIATE: 40,
   EXPERT: 99
 }
+
+export const cellsToDiscover = {
+  BEGINNER: 71,
+  INTERMEDIATE: 216,
+  EXPERT: 381
+}

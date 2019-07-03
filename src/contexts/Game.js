@@ -14,7 +14,6 @@ const GameContext = React.createContext()
 export class GameProvider extends React.Component {
   state = {
     bombsRemaining: 10,
-    cellsToDiscover: 71,
     cheat: {
       cleanCorners: false,
       hover: false
@@ -61,17 +60,10 @@ export class GameProvider extends React.Component {
     // Prevents the trigger using the "enter" key
     if (event && event.detail === 0) return
 
-    const { selectedLevel } = this.state
-
-    const bombs = bombsQuantity[selectedLevel]
-    const rows = rowsQuantity[selectedLevel]
-    const columns = columnsQuantity[selectedLevel]
-
     this.stopTimer()
 
     this.setState({
       bombsRemaining: bombsQuantity[this.state.selectedLevel],
-      cellsToDiscover: rows * columns - bombs,
       cheat: {
         ...this.state.cheat,
         cleanCorners: false
@@ -85,19 +77,15 @@ export class GameProvider extends React.Component {
 
   changeLevel = selectedLevel => {
     this.setState({ selectedLevel }, this.restartGame)
-
-    const bombs = bombsQuantity[selectedLevel]
-    const rows = rowsQuantity[selectedLevel]
-    const columns = columnsQuantity[selectedLevel]
-
-    this.setState({ bombs, columns, rows }, this.startGrid)
   }
 
   cellClicked = clickedCells => {
-    const { status } = this.state
+    const { selectedLevel, status } = this.state
     if (status !== gameStatus.READY && status !== gameStatus.PLAYING) return
 
+    const bombs = bombsQuantity[selectedLevel]
     let newGrid = this.state.grid
+
     for (const cell of clickedCells) {
       if (cell.isVisible) return
       if (cell.hasFlag) return
@@ -106,37 +94,17 @@ export class GameProvider extends React.Component {
       if (cell.hasBomb) {
         this.setState({ status: gameStatus.GAME_OVER })
         newGrid = this.clickedOnBomb(newGrid, cell)
-      } else {
-        const remainingCellsToDiscover = this.updateCellsToDiscover(newGrid)
-        this.verifyVictory(remainingCellsToDiscover)
+      } else if (gridUtils.isVictory(newGrid, bombs)) {
+        this.stopTimer()
+        this.setState({ status: gameStatus.VICTORY })
       }
     }
-    if (status === gameStatus.READY) {
-      this.setState({ status: gameStatus.PLAYING }, () => {
-        if (clickedCells.length > 1) {
-          this.startTimer()
-        } else if (!clickedCells[0].hasBomb) {
-          this.startTimer()
-        }
-      })
+
+    if (cellUtils.shouldStartTimer(status, clickedCells)) {
+      this.setState({ status: gameStatus.PLAYING }, this.startTimer)
     }
 
     this.setState({ grid: newGrid })
-  }
-
-  updateCellsToDiscover = grid => {
-    let newCellsToDiscover = this.state.cellsToDiscover
-    for (const cell of grid) {
-      if (cell.isVisible) newCellsToDiscover = newCellsToDiscover - 1
-    }
-    return newCellsToDiscover
-  }
-
-  verifyVictory = cells => {
-    if (cells === 0) {
-      this.stopTimer()
-      this.setState({ status: gameStatus.VICTORY })
-    }
   }
 
   changeCellToVisible = (grid, cell) => {

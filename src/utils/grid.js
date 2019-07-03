@@ -122,3 +122,8 @@ export const calculateDangerLevel = (grid, cell) => {
     return grid[neighbor].hasBomb ? dangerLevel + 1 : dangerLevel
   }, 0)
 }
+
+export const isVictory = (grid, bombsQuantity) => {
+  const visibleCells = grid.filter(cell => cell.isVisible).length
+  return visibleCells + bombsQuantity === grid.length
+}
