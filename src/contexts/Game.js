@@ -1,27 +1,15 @@
 import React from 'react'
 
+import * as gridUtils from '../utils/grid'
 import * as utils from '../utils'
+import {
+  bombsQuantity,
+  columnsQuantity,
+  gameStatus,
+  rowsQuantity
+} from '../constants'
 
 const GameContext = React.createContext()
-
-const gameStatus = {
-  ready: 0,
-  playing: 1,
-  gameover: 2,
-  victory: 3
-}
-
-const gridSize = {
-  Beginner: { rows: 9, columns: 9 },
-  Intermediate: { rows: 16, columns: 16 },
-  Expert: { rows: 16, columns: 30 }
-}
-
-const bombsQuantity = {
-  Beginner: 10,
-  Intermediate: 40,
-  Expert: 99
-}
 
 export class GameProvider extends React.Component {
   state = {
@@ -32,12 +20,10 @@ export class GameProvider extends React.Component {
       cleanBorders: false,
       hover: false
     },
-    columns: 9,
     grid: [],
     navigateUsingArrow: 0,
-    rows: 9,
-    status: gameStatus.ready,
-    selectedLevel: 'Beginner',
+    status: gameStatus.READY,
+    selectedLevel: 'BEGINNER',
     time: 0
   }
 
@@ -46,8 +32,11 @@ export class GameProvider extends React.Component {
   componentDidMount = () => this.startGrid()
 
   startGrid = async () => {
-    const { columns, rows, bombs, cheat } = this.state
-    let newGrid = utils.generateGrid(rows, columns)
+    const { bombs, cheat, selectedLevel } = this.state
+    const rows = rowsQuantity[selectedLevel]
+    const columns = columnsQuantity[selectedLevel]
+
+    let newGrid = gridUtils.generateGrid(rows, columns)
     newGrid = utils.generateBombs(
       newGrid,
       rows,
@@ -74,7 +63,7 @@ export class GameProvider extends React.Component {
         cleanBorders: false
       },
       navigateUsingArrow: 0,
-      status: gameStatus.ready,
+      status: gameStatus.READY,
       time: 0
     })
     return await this.startGrid()
@@ -84,14 +73,15 @@ export class GameProvider extends React.Component {
     this.setState({ selectedLevel }, this.restartGame)
 
     const bombs = bombsQuantity[selectedLevel]
-    const { rows, columns } = gridSize[selectedLevel]
+    const rows = rowsQuantity[selectedLevel]
+    const columns = columnsQuantity[selectedLevel]
 
     this.setState({ bombs, columns, rows }, this.startGrid)
   }
 
   cellClicked = clickedCells => {
     const { status } = this.state
-    if (status !== gameStatus.ready && status !== gameStatus.playing) return
+    if (status !== gameStatus.READY && status !== gameStatus.PLAYING) return
 
     let newGrid = this.state.grid
     for (const cell of clickedCells) {
@@ -100,15 +90,15 @@ export class GameProvider extends React.Component {
       newGrid = this.changeCellToVisible(this.state.grid, cell)
 
       if (cell.hasBomb) {
-        this.setState({ status: gameStatus.gameover })
+        this.setState({ status: gameStatus.GAME_OVER })
         newGrid = this.clickedOnBomb(newGrid, cell)
       } else {
         const remainingCellsToDiscover = this.updateCellsToDiscover(newGrid)
         this.verifyVictory(remainingCellsToDiscover)
       }
     }
-    if (status === gameStatus.ready) {
-      this.setState({ status: gameStatus.playing }, () => {
+    if (status === gameStatus.READY) {
+      this.setState({ status: gameStatus.PLAYING }, () => {
         if (clickedCells.length > 1) {
           this.startTimer()
         } else if (!clickedCells[0].hasBomb) {
@@ -131,7 +121,7 @@ export class GameProvider extends React.Component {
   verifyVictory = cells => {
     if (cells === 0) {
       this.stopTimer()
-      this.setState({ status: gameStatus.victory })
+      this.setState({ status: gameStatus.VICTORY })
     }
   }
 
@@ -216,7 +206,10 @@ export class GameProvider extends React.Component {
       async () => {
         await this.restartGame()
 
-        const { columns, grid, rows } = this.state
+        const { grid, selectedLevel } = this.state
+        const rows = rowsQuantity[selectedLevel]
+        const columns = columnsQuantity[selectedLevel]
+
         const cellTopLeft = grid[0]
         const cellTopRight = grid[columns - 1]
         const cellBottomLeft = grid[(rows - 1) * columns]
@@ -246,7 +239,9 @@ export class GameProvider extends React.Component {
     const id = this.state.navigateUsingArrow
     const newGrid = this.state.grid
     const activeCell = newGrid[id]
-    const { columns, rows } = this.state
+    const { selectedLevel } = this.state
+    const rows = rowsQuantity[selectedLevel]
+    const columns = columnsQuantity[selectedLevel]
 
     let newNavigateUsingArrow = id
 
@@ -294,8 +289,8 @@ export class GameProvider extends React.Component {
           cheat: this.state.cheat,
           cleanBorders: this.cleanBorders,
           grid: this.state.grid,
-          isGameOver: this.state.status === gameStatus.gameover,
-          isVictory: this.state.status === gameStatus.victory,
+          isGameOver: this.state.status === gameStatus.GAME_OVER,
+          isVictory: this.state.status === gameStatus.VICTORY,
           navigateUsingArrow: this.state.navigateUsingArrow,
           restartGame: this.restartGame,
           selectedLevel: this.state.selectedLevel,

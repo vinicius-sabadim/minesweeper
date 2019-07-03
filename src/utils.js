@@ -13,28 +13,6 @@ export const groupBy = (list, keyGetter) => {
   return obj
 }
 
-export const generateGrid = (rows, columns) => {
-  const grid = []
-  const cells = rows * columns
-
-  for (const index in [...Array(cells)]) {
-    const id = parseInt(index, 10)
-    grid.push({
-      id,
-      row: Math.floor(id / columns),
-      column: id % columns,
-      hasBomb: false,
-      hasFlag: false,
-      dangerLevel: 0,
-      isHovered: false,
-      isVisible: false,
-      neighbors: []
-    })
-  }
-
-  return grid
-}
-
 export const generateBombs = (grid, rows, columns, bombs, cleanBorders) => {
   let bombsInserted = 0
 
