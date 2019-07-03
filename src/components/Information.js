@@ -11,7 +11,7 @@ const Information = () => {
   const {
     bombsRemaining,
     cheat,
-    cleanBorders,
+    cleanCorners,
     isVictory,
     restartGame,
     time,
@@ -45,7 +45,7 @@ const Information = () => {
           label="Show hover"
           onChange={toggleCheatHover}
         />
-        <Button onClick={cleanBorders}>Start with clean borders</Button>
+        <Button onClick={cleanCorners}>Start with clean corners</Button>
       </div>
 
       <div className={styles.hints}>

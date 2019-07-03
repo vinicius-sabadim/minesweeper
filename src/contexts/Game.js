@@ -13,11 +13,10 @@ const GameContext = React.createContext()
 
 export class GameProvider extends React.Component {
   state = {
-    bombs: 10,
     bombsRemaining: 10,
     cellsToDiscover: 71,
     cheat: {
-      cleanBorders: false,
+      cleanCorners: false,
       hover: false
     },
     grid: [],
@@ -32,19 +31,22 @@ export class GameProvider extends React.Component {
   componentDidMount = () => this.startGrid()
 
   startGrid = async () => {
-    const { bombs, cheat, selectedLevel } = this.state
+    const { selectedLevel } = this.state
+
+    const bombs = bombsQuantity[selectedLevel]
     const rows = rowsQuantity[selectedLevel]
     const columns = columnsQuantity[selectedLevel]
+    const notPutBombsOnCorners = this.state.cheat.cleanCorners
 
-    let newGrid = gridUtils.generateGrid(rows, columns)
-    newGrid = utils.generateBombs(
-      newGrid,
+    const initialGrid = gridUtils.generateGrid(rows, columns)
+    const gridWithBombs = gridUtils.generateBombs(
+      initialGrid,
       rows,
       columns,
       bombs,
-      cheat.cleanBorders
+      notPutBombsOnCorners
     )
-    newGrid = utils.includeNeighborInformation(newGrid, rows, columns)
+    let newGrid = utils.includeNeighborInformation(gridWithBombs, rows, columns)
     newGrid = utils.generateDanger(newGrid)
     return await this.setState({ grid: newGrid })
   }
@@ -60,7 +62,7 @@ export class GameProvider extends React.Component {
       cellsToDiscover: this.state.rows * this.state.columns - this.state.bombs,
       cheat: {
         ...this.state.cheat,
-        cleanBorders: false
+        cleanCorners: false
       },
       navigateUsingArrow: 0,
       status: gameStatus.READY,
@@ -192,7 +194,7 @@ export class GameProvider extends React.Component {
     this.setState({ grid: newGrid })
   }
 
-  cleanBorders = event => {
+  cleanCorners = event => {
     // Prevents the trigger using the "enter" key
     if (event && event.detail === 0) return
 
@@ -200,7 +202,7 @@ export class GameProvider extends React.Component {
       {
         cheat: {
           ...this.state.cheat,
-          cleanBorders: true
+          cleanCorners: true
         }
       },
       async () => {
@@ -263,7 +265,7 @@ export class GameProvider extends React.Component {
     } else if (action === 'restart') {
       this.restartGame()
     } else if (action === 'clean') {
-      this.cleanBorders()
+      this.cleanCorners()
     }
     this.setState({ navigateUsingArrow: newNavigateUsingArrow })
   }
@@ -287,7 +289,7 @@ export class GameProvider extends React.Component {
           changeNavigation: this.changeNavigation,
           cellClicked: this.cellClicked,
           cheat: this.state.cheat,
-          cleanBorders: this.cleanBorders,
+          cleanCorners: this.cleanCorners,
           grid: this.state.grid,
           isGameOver: this.state.status === gameStatus.GAME_OVER,
           isVictory: this.state.status === gameStatus.VICTORY,

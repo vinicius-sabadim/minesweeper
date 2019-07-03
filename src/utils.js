@@ -1,5 +1,3 @@
-export const random = value => Math.floor(Math.random() * value)
-
 export const groupBy = (list, keyGetter) => {
   const obj = list.reduce((acc, item) => {
     const key = keyGetter(item)
@@ -11,46 +9,6 @@ export const groupBy = (list, keyGetter) => {
     return acc
   }, {})
   return obj
-}
-
-export const generateBombs = (grid, rows, columns, bombs, cleanBorders) => {
-  let bombsInserted = 0
-
-  while (bombsInserted < bombs) {
-    const id = getId(grid, rows, columns, cleanBorders)
-    if (!grid[id].hasBomb) {
-      grid[id] = {
-        ...grid[id],
-        hasBomb: true,
-        explode: false
-      }
-      bombsInserted = bombsInserted + 1
-    }
-  }
-  return grid
-}
-
-const getId = (grid, rows, columns, cleanBorders) => {
-  const total = rows * columns
-  if (cleanBorders) {
-    const blockedIds = [
-      grid[0].id,
-      grid[columns - 1].id,
-      grid[(rows - 1) * columns].id,
-      grid[grid.length - 1].id
-    ]
-    let allGood = false
-    let id = null
-    while (!allGood) {
-      id = random(total)
-      if (!blockedIds.includes(id)) {
-        allGood = true
-      }
-    }
-    return id
-  } else {
-    return random(total)
-  }
 }
 
 export const includeNeighborInformation = (grid, rows, columns) => {
