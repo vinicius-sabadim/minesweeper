@@ -1,7 +1,7 @@
 import React from 'react'
 
+import * as cellUtils from '../utils/cell'
 import * as gridUtils from '../utils/grid'
-import * as utils from '../utils'
 import {
   bombsQuantity,
   columnsQuantity,
@@ -46,8 +46,12 @@ export class GameProvider extends React.Component {
       bombs,
       notPutBombsOnCorners
     )
-    let newGrid = utils.includeNeighborInformation(gridWithBombs, rows, columns)
-    newGrid = utils.generateDanger(newGrid)
+    const gridWithNeighborInformation = gridUtils.includeNeighborInformation(
+      gridWithBombs,
+      rows,
+      columns
+    )
+    const newGrid = gridUtils.generateDanger(gridWithNeighborInformation)
     return await this.setState({ grid: newGrid })
   }
 
@@ -247,15 +251,15 @@ export class GameProvider extends React.Component {
 
     let newNavigateUsingArrow = id
 
-    if (action === 'down' && utils.hasLowerRow(activeCell, rows)) {
+    if (action === 'down' && cellUtils.hasLowerRow(activeCell, rows)) {
       newNavigateUsingArrow = id + columns
-    } else if (action === 'up' && utils.hasUpperRow(activeCell)) {
+    } else if (action === 'up' && cellUtils.hasUpperRow(activeCell)) {
       newNavigateUsingArrow = id - columns
-    } else if (action === 'left' && utils.hasLeftColumn(activeCell)) {
+    } else if (action === 'left' && cellUtils.hasLeftColumn(activeCell)) {
       newNavigateUsingArrow = id - 1
     } else if (
       action === 'right' &&
-      utils.hasRightColumn(activeCell, columns)
+      cellUtils.hasRightColumn(activeCell, columns)
     ) {
       newNavigateUsingArrow = id + 1
     } else if (action === 'trigger') {

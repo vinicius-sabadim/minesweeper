@@ -1,3 +1,5 @@
+import { hasLeftColumn, hasRightColumn, hasUpperRow, hasLowerRow } from './cell'
+
 export const generateGrid = (rows, columns) => {
   const cells = rows * columns
 
@@ -22,20 +24,23 @@ export const generateGrid = (rows, columns) => {
 }
 
 export const generateBombs = (grid, rows, columns, bombs, cleanCorners) => {
-  let bombsInserted = 0
+  const ids = new Set()
 
-  while (bombsInserted < bombs) {
+  while (ids.size < bombs) {
     const id = getRandomId(grid, rows, columns, cleanCorners)
-    if (!grid[id].hasBomb) {
-      grid[id] = {
-        ...grid[id],
+    ids.add(id)
+  }
+
+  return grid.map(cell => {
+    if (ids.has(cell.id))
+      return {
+        ...cell,
         hasBomb: true,
         explode: false
       }
-      bombsInserted = bombsInserted + 1
-    }
-  }
-  return grid
+
+    return cell
+  })
 }
 
 const random = value => Math.floor(Math.random() * value)
@@ -60,4 +65,60 @@ const getRandomId = (grid, rows, columns, cleanCorners) => {
     }
   }
   return validId
+}
+
+export const includeNeighborInformation = (grid, rows, columns) => {
+  return grid.map(cell => {
+    const neighbors = cell.neighbors
+    if (hasUpperRow(cell) && hasLeftColumn(cell))
+      neighbors.push(cell.id - columns - 1)
+
+    if (hasUpperRow(cell)) {
+      neighbors.push(cell.id - columns)
+    }
+
+    if (hasUpperRow(cell) && hasRightColumn(cell, columns)) {
+      neighbors.push(cell.id - columns + 1)
+    }
+
+    if (hasLeftColumn(cell)) {
+      neighbors.push(cell.id - 1)
+    }
+
+    if (hasRightColumn(cell, columns)) {
+      neighbors.push(cell.id + 1)
+    }
+
+    if (hasLowerRow(cell, rows) && hasLeftColumn(cell)) {
+      neighbors.push(cell.id + columns - 1)
+    }
+
+    if (hasLowerRow(cell, rows)) {
+      neighbors.push(cell.id + columns)
+    }
+
+    if (hasLowerRow(cell, rows) && hasRightColumn(cell, columns)) {
+      neighbors.push(cell.id + columns + 1)
+    }
+
+    return {
+      ...cell,
+      neighbors
+    }
+  })
+}
+
+export const generateDanger = grid => {
+  return grid.map(cell => ({
+    ...cell,
+    dangerLevel: calculateDangerLevel(grid, cell)
+  }))
+}
+
+export const calculateDangerLevel = (grid, cell) => {
+  const neighbors = cell.neighbors
+
+  return neighbors.reduce((dangerLevel, neighbor) => {
+    return grid[neighbor].hasBomb ? dangerLevel + 1 : dangerLevel
+  }, 0)
 }
