@@ -61,11 +61,17 @@ export class GameProvider extends React.Component {
     // Prevents the trigger using the "enter" key
     if (event && event.detail === 0) return
 
+    const { selectedLevel } = this.state
+
+    const bombs = bombsQuantity[selectedLevel]
+    const rows = rowsQuantity[selectedLevel]
+    const columns = columnsQuantity[selectedLevel]
+
     this.stopTimer()
 
     this.setState({
       bombsRemaining: bombsQuantity[this.state.selectedLevel],
-      cellsToDiscover: this.state.rows * this.state.columns - this.state.bombs,
+      cellsToDiscover: rows * columns - bombs,
       cheat: {
         ...this.state.cheat,
         cleanCorners: false
