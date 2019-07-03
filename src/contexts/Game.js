@@ -30,7 +30,7 @@ export class GameProvider extends React.Component {
 
   componentDidMount = () => this.startGrid()
 
-  startGrid = async () => {
+  startGrid = () => {
     const { selectedLevel } = this.state
 
     const bombs = bombsQuantity[selectedLevel]
@@ -51,8 +51,10 @@ export class GameProvider extends React.Component {
       rows,
       columns
     )
-    const newGrid = gridUtils.generateDanger(gridWithNeighborInformation)
-    return await this.setState({ grid: newGrid })
+    const gridWithDangerLevel = gridUtils.generateDanger(
+      gridWithNeighborInformation
+    )
+    this.setState({ grid: gridWithDangerLevel })
   }
 
   restartGame = async event => {

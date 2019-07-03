@@ -62,7 +62,7 @@ const Information = () => {
           <strong>R</strong>: restart
         </p>
         <p>
-          <strong>C</strong>: start with clean border
+          <strong>C</strong>: start with clean corners
         </p>
       </div>
     </div>
