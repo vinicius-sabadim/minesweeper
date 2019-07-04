@@ -23,3 +23,7 @@ export const shouldStartTimer = (status, cells) => {
 
   return false
 }
+
+export const calculateBombsRemaining = (bombs, flag) => {
+  return flag ? bombs - 1 : bombs + 1
+}

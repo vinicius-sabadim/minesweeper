@@ -129,14 +129,12 @@ export class GameProvider extends React.Component {
       explode: true
     }
 
-    grid = grid.map(cell => {
+    return grid.map(cell => {
       if (cell.hasBomb && !cell.explode) {
         return { ...cell, isVisible: true }
       }
       return cell
     })
-
-    return grid
   }
 
   toggleFlag = (clickedCell, event) => {
@@ -146,19 +144,30 @@ export class GameProvider extends React.Component {
 
     if (clickedCell.isVisible) return
 
-    const newGrid = this.state.grid
-    const cell = newGrid[clickedCell.id]
+    const cell = this.state.grid[clickedCell.id]
+    const newFlagStatus = !cell.hasFlag
+    const newGrid = this.updateGrid(this.state.grid, cell.id, {
+      hasFlag: newFlagStatus
+    })
 
-    const newBombsRemaining = cell.hasFlag
-      ? this.state.bombsRemaining + 1
-      : this.state.bombsRemaining - 1
+    this.setState({
+      bombsRemaining: cellUtils.calculateBombsRemaining(
+        this.state.bombsRemaining,
+        newFlagStatus
+      ),
+      grid: newGrid
+    })
+  }
 
-    newGrid[clickedCell.id] = {
-      ...cell,
-      hasFlag: !cell.hasFlag
-    }
+  updateGrid = (grid, idToUpdate, newValues) => {
+    return grid.map(cell => {
+      if (cell.id !== idToUpdate) return cell
 
-    this.setState({ bombsRemaining: newBombsRemaining, grid: newGrid })
+      return {
+        ...cell,
+        ...newValues
+      }
+    })
   }
 
   setHover = (cell, isHovered) => {
