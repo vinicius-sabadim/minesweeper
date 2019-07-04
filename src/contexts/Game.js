@@ -123,13 +123,12 @@ export class GameProvider extends React.Component {
   clickedOnBomb = (grid, clickedCell) => {
     this.stopTimer()
 
-    grid[clickedCell.id] = {
-      ...clickedCell,
+    const newGrid = this.updateGrid(grid, clickedCell.id, {
       isVisible: true,
       explode: true
-    }
+    })
 
-    return grid.map(cell => {
+    return newGrid.map(cell => {
       if (cell.hasBomb && !cell.explode) {
         return { ...cell, isVisible: true }
       }
