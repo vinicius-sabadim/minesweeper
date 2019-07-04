@@ -11,7 +11,7 @@ const Menu = () => {
 
   return (
     <ul className={styles.menu}>
-      {['Beginner', 'Intermediate', 'Expert'].map(level => (
+      {['BEGINNER', 'INTERMEDIATE', 'EXPERT'].map(level => (
         <ListItem
           action={changeLevel}
           key={level}
@@ -23,6 +23,12 @@ const Menu = () => {
   )
 }
 
+const levelText = {
+  BEGINNER: 'Beginner',
+  INTERMEDIATE: 'Intermediate',
+  EXPERT: 'Expert'
+}
+
 const ListItem = ({ action, level, selectedLevel }) => (
   <li
     {...css(
@@ -31,7 +37,7 @@ const ListItem = ({ action, level, selectedLevel }) => (
     )}
     onClick={action.bind(this, level)}
   >
-    {level}
+    {levelText[level]}
   </li>
 )
 

@@ -3,8 +3,6 @@ import React, { useContext, useEffect } from 'react'
 import Row from './Row'
 import GameContext from '../contexts/Game'
 
-import { groupBy } from '../utils'
-
 import styles from './Grid.style'
 
 const keys = {
@@ -17,6 +15,19 @@ const keys = {
   f: 'flag',
   r: 'restart',
   c: 'clean'
+}
+
+const groupBy = (list, keyGetter) => {
+  const obj = list.reduce((acc, item) => {
+    const key = keyGetter(item)
+    if (acc[key]) {
+      acc[key].push(item)
+    } else {
+      acc[key] = [item]
+    }
+    return acc
+  }, {})
+  return obj
 }
 
 const Grid = () => {

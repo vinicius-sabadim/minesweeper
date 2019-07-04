@@ -1,43 +1,27 @@
 import React from 'react'
 
-import * as utils from '../utils'
+import * as cellUtils from '../utils/cell'
+import * as gridUtils from '../utils/grid'
+import {
+  bombsQuantity,
+  columnsQuantity,
+  gameStatus,
+  rowsQuantity
+} from '../constants'
 
 const GameContext = React.createContext()
 
-const gameStatus = {
-  ready: 0,
-  playing: 1,
-  gameover: 2,
-  victory: 3
-}
-
-const gridSize = {
-  Beginner: { rows: 9, columns: 9 },
-  Intermediate: { rows: 16, columns: 16 },
-  Expert: { rows: 16, columns: 30 }
-}
-
-const bombsQuantity = {
-  Beginner: 10,
-  Intermediate: 40,
-  Expert: 99
-}
-
 export class GameProvider extends React.Component {
   state = {
-    bombs: 10,
     bombsRemaining: 10,
-    cellsToDiscover: 71,
     cheat: {
-      cleanBorders: false,
+      cleanCorners: false,
       hover: false
     },
-    columns: 9,
     grid: [],
     navigateUsingArrow: 0,
-    rows: 9,
-    status: gameStatus.ready,
-    selectedLevel: 'Beginner',
+    status: gameStatus.READY,
+    selectedLevel: 'BEGINNER',
     time: 0
   }
 
@@ -45,22 +29,34 @@ export class GameProvider extends React.Component {
 
   componentDidMount = () => this.startGrid()
 
-  startGrid = async () => {
-    const { columns, rows, bombs, cheat } = this.state
-    let newGrid = utils.generateGrid(rows, columns)
-    newGrid = utils.generateBombs(
-      newGrid,
+  startGrid = () => {
+    const { selectedLevel } = this.state
+
+    const bombs = bombsQuantity[selectedLevel]
+    const rows = rowsQuantity[selectedLevel]
+    const columns = columnsQuantity[selectedLevel]
+    const notPutBombsOnCorners = this.state.cheat.cleanCorners
+
+    const initialGrid = gridUtils.generateGrid(rows, columns)
+    const gridWithBombs = gridUtils.generateBombs(
+      initialGrid,
       rows,
       columns,
       bombs,
-      cheat.cleanBorders
+      notPutBombsOnCorners
     )
-    newGrid = utils.includeNeighborInformation(newGrid, rows, columns)
-    newGrid = utils.generateDanger(newGrid)
-    return await this.setState({ grid: newGrid })
+    const gridWithNeighborInformation = gridUtils.includeNeighborInformation(
+      gridWithBombs,
+      rows,
+      columns
+    )
+    const gridWithDangerLevel = gridUtils.generateDanger(
+      gridWithNeighborInformation
+    )
+    this.setState({ grid: gridWithDangerLevel })
   }
 
-  restartGame = async event => {
+  restartGame = event => {
     // Prevents the trigger using the "enter" key
     if (event && event.detail === 0) return
 
@@ -68,71 +64,47 @@ export class GameProvider extends React.Component {
 
     this.setState({
       bombsRemaining: bombsQuantity[this.state.selectedLevel],
-      cellsToDiscover: this.state.rows * this.state.columns - this.state.bombs,
       cheat: {
         ...this.state.cheat,
-        cleanBorders: false
+        cleanCorners: false
       },
       navigateUsingArrow: 0,
-      status: gameStatus.ready,
+      status: gameStatus.READY,
       time: 0
     })
-    return await this.startGrid()
+    this.startGrid()
   }
 
   changeLevel = selectedLevel => {
     this.setState({ selectedLevel }, this.restartGame)
-
-    const bombs = bombsQuantity[selectedLevel]
-    const { rows, columns } = gridSize[selectedLevel]
-
-    this.setState({ bombs, columns, rows }, this.startGrid)
   }
 
   cellClicked = clickedCells => {
-    const { status } = this.state
-    if (status !== gameStatus.ready && status !== gameStatus.playing) return
+    const { selectedLevel, status } = this.state
+    if (status !== gameStatus.READY && status !== gameStatus.PLAYING) return
 
-    let newGrid = this.state.grid
+    let newGrid
+    const bombs = bombsQuantity[selectedLevel]
+
     for (const cell of clickedCells) {
       if (cell.isVisible) return
       if (cell.hasFlag) return
       newGrid = this.changeCellToVisible(this.state.grid, cell)
 
       if (cell.hasBomb) {
-        this.setState({ status: gameStatus.gameover })
+        this.setState({ status: gameStatus.GAME_OVER })
         newGrid = this.clickedOnBomb(newGrid, cell)
-      } else {
-        const remainingCellsToDiscover = this.updateCellsToDiscover(newGrid)
-        this.verifyVictory(remainingCellsToDiscover)
+      } else if (gridUtils.isVictory(newGrid, bombs)) {
+        this.stopTimer()
+        this.setState({ status: gameStatus.VICTORY })
       }
     }
-    if (status === gameStatus.ready) {
-      this.setState({ status: gameStatus.playing }, () => {
-        if (clickedCells.length > 1) {
-          this.startTimer()
-        } else if (!clickedCells[0].hasBomb) {
-          this.startTimer()
-        }
-      })
+
+    if (cellUtils.shouldStartTimer(status, clickedCells)) {
+      this.setState({ status: gameStatus.PLAYING }, this.startTimer)
     }
 
     this.setState({ grid: newGrid })
-  }
-
-  updateCellsToDiscover = grid => {
-    let newCellsToDiscover = this.state.cellsToDiscover
-    for (const cell of grid) {
-      if (cell.isVisible) newCellsToDiscover = newCellsToDiscover - 1
-    }
-    return newCellsToDiscover
-  }
-
-  verifyVictory = cells => {
-    if (cells === 0) {
-      this.stopTimer()
-      this.setState({ status: gameStatus.victory })
-    }
   }
 
   changeCellToVisible = (grid, cell) => {
@@ -151,20 +123,17 @@ export class GameProvider extends React.Component {
   clickedOnBomb = (grid, clickedCell) => {
     this.stopTimer()
 
-    grid[clickedCell.id] = {
-      ...clickedCell,
+    const newGrid = this.updateGrid(grid, clickedCell.id, {
       isVisible: true,
       explode: true
-    }
+    })
 
-    grid = grid.map(cell => {
+    return newGrid.map(cell => {
       if (cell.hasBomb && !cell.explode) {
         return { ...cell, isVisible: true }
       }
       return cell
     })
-
-    return grid
   }
 
   toggleFlag = (clickedCell, event) => {
@@ -174,26 +143,38 @@ export class GameProvider extends React.Component {
 
     if (clickedCell.isVisible) return
 
-    const newGrid = this.state.grid
-    const cell = newGrid[clickedCell.id]
+    const cell = this.state.grid[clickedCell.id]
+    const newFlagStatus = !cell.hasFlag
+    const newGrid = this.updateGrid(this.state.grid, cell.id, {
+      hasFlag: newFlagStatus
+    })
 
-    const newBombsRemaining = cell.hasFlag
-      ? this.state.bombsRemaining + 1
-      : this.state.bombsRemaining - 1
+    this.setState({
+      bombsRemaining: cellUtils.calculateBombsRemaining(
+        this.state.bombsRemaining,
+        newFlagStatus
+      ),
+      grid: newGrid
+    })
+  }
 
-    newGrid[clickedCell.id] = {
-      ...cell,
-      hasFlag: !cell.hasFlag
-    }
+  updateGrid = (grid, idToUpdate, newValues) => {
+    return grid.map(cell => {
+      if (cell.id !== idToUpdate) return cell
 
-    this.setState({ bombsRemaining: newBombsRemaining, grid: newGrid })
+      return {
+        ...cell,
+        ...newValues
+      }
+    })
   }
 
   setHover = (cell, isHovered) => {
     if (!this.state.cheat.hover) return
 
-    const newGrid = this.state.grid
-    newGrid[cell.id] = { ...cell, isHovered }
+    const newGrid = this.updateGrid(this.state.grid, cell.id, {
+      isHovered
+    })
 
     cell.neighbors.forEach(neighbor => {
       newGrid[neighbor].isHovered = isHovered
@@ -202,7 +183,7 @@ export class GameProvider extends React.Component {
     this.setState({ grid: newGrid })
   }
 
-  cleanBorders = event => {
+  cleanCorners = event => {
     // Prevents the trigger using the "enter" key
     if (event && event.detail === 0) return
 
@@ -210,13 +191,16 @@ export class GameProvider extends React.Component {
       {
         cheat: {
           ...this.state.cheat,
-          cleanBorders: true
+          cleanCorners: true
         }
       },
       async () => {
         await this.restartGame()
 
-        const { columns, grid, rows } = this.state
+        const { grid, selectedLevel } = this.state
+        const rows = rowsQuantity[selectedLevel]
+        const columns = columnsQuantity[selectedLevel]
+
         const cellTopLeft = grid[0]
         const cellTopRight = grid[columns - 1]
         const cellBottomLeft = grid[(rows - 1) * columns]
@@ -246,19 +230,21 @@ export class GameProvider extends React.Component {
     const id = this.state.navigateUsingArrow
     const newGrid = this.state.grid
     const activeCell = newGrid[id]
-    const { columns, rows } = this.state
+    const { selectedLevel } = this.state
+    const rows = rowsQuantity[selectedLevel]
+    const columns = columnsQuantity[selectedLevel]
 
     let newNavigateUsingArrow = id
 
-    if (action === 'down' && utils.hasLowerRow(activeCell, rows)) {
+    if (action === 'down' && cellUtils.hasLowerRow(activeCell, rows)) {
       newNavigateUsingArrow = id + columns
-    } else if (action === 'up' && utils.hasUpperRow(activeCell)) {
+    } else if (action === 'up' && cellUtils.hasUpperRow(activeCell)) {
       newNavigateUsingArrow = id - columns
-    } else if (action === 'left' && utils.hasLeftColumn(activeCell)) {
+    } else if (action === 'left' && cellUtils.hasLeftColumn(activeCell)) {
       newNavigateUsingArrow = id - 1
     } else if (
       action === 'right' &&
-      utils.hasRightColumn(activeCell, columns)
+      cellUtils.hasRightColumn(activeCell, columns)
     ) {
       newNavigateUsingArrow = id + 1
     } else if (action === 'trigger') {
@@ -268,7 +254,7 @@ export class GameProvider extends React.Component {
     } else if (action === 'restart') {
       this.restartGame()
     } else if (action === 'clean') {
-      this.cleanBorders()
+      this.cleanCorners()
     }
     this.setState({ navigateUsingArrow: newNavigateUsingArrow })
   }
@@ -292,10 +278,10 @@ export class GameProvider extends React.Component {
           changeNavigation: this.changeNavigation,
           cellClicked: this.cellClicked,
           cheat: this.state.cheat,
-          cleanBorders: this.cleanBorders,
+          cleanCorners: this.cleanCorners,
           grid: this.state.grid,
-          isGameOver: this.state.status === gameStatus.gameover,
-          isVictory: this.state.status === gameStatus.victory,
+          isGameOver: this.state.status === gameStatus.GAME_OVER,
+          isVictory: this.state.status === gameStatus.VICTORY,
           navigateUsingArrow: this.state.navigateUsingArrow,
           restartGame: this.restartGame,
           selectedLevel: this.state.selectedLevel,
