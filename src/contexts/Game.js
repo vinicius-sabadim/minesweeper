@@ -56,7 +56,7 @@ export class GameProvider extends React.Component {
     this.setState({ grid: gridWithDangerLevel })
   }
 
-  restartGame = async event => {
+  restartGame = event => {
     // Prevents the trigger using the "enter" key
     if (event && event.detail === 0) return
 
@@ -72,7 +72,7 @@ export class GameProvider extends React.Component {
       status: gameStatus.READY,
       time: 0
     })
-    return await this.startGrid()
+    this.startGrid()
   }
 
   changeLevel = selectedLevel => {
@@ -83,8 +83,8 @@ export class GameProvider extends React.Component {
     const { selectedLevel, status } = this.state
     if (status !== gameStatus.READY && status !== gameStatus.PLAYING) return
 
+    let newGrid
     const bombs = bombsQuantity[selectedLevel]
-    let newGrid = this.state.grid
 
     for (const cell of clickedCells) {
       if (cell.isVisible) return
@@ -172,8 +172,9 @@ export class GameProvider extends React.Component {
   setHover = (cell, isHovered) => {
     if (!this.state.cheat.hover) return
 
-    const newGrid = this.state.grid
-    newGrid[cell.id] = { ...cell, isHovered }
+    const newGrid = this.updateGrid(this.state.grid, cell.id, {
+      isHovered
+    })
 
     cell.neighbors.forEach(neighbor => {
       newGrid[neighbor].isHovered = isHovered
