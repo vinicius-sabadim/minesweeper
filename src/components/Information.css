@@ -1,0 +1,31 @@
+.info__container {
+  margin-right: 50px;
+}
+.info__wrapper {
+  margin-bottom: 30px;
+}
+.info__text {
+  color: #4286f4;
+  font-size: 20px;
+  font-weight: bold;
+}
+.info__victory {
+  color: #4286f4;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 30px;
+}
+.info__cheatArea {
+  border: 1px solid #bbbbbb;
+  margin-top: 30px;
+  padding: 10px;
+}
+.info__cheatArea > h1 {
+  color: #555555;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.info__hints {
+  line-height: 24px;
+  padding: 20px;
+}

@@ -1,16 +1,15 @@
 import React, { useContext } from 'react'
 import PropTypes from 'prop-types'
-import { css } from 'glamor'
 
 import GameContext from '../contexts/Game'
 
-import styles from './Menu.style'
+import './Menu.css'
 
 const Menu = () => {
   const { changeLevel, selectedLevel } = useContext(GameContext)
 
   return (
-    <ul className={styles.menu}>
+    <ul className="menu__container">
       {['BEGINNER', 'INTERMEDIATE', 'EXPERT'].map(level => (
         <ListItem
           action={changeLevel}
@@ -31,10 +30,9 @@ const levelText = {
 
 const ListItem = ({ action, level, selectedLevel }) => (
   <li
-    {...css(
-      styles.listItem,
-      level === selectedLevel ? styles.listItemActive : ''
-    )}
+    className={`
+      menu__listItem
+      ${level === selectedLevel ? 'menu__listItem--active' : ''}`}
     onClick={action.bind(this, level)}
   >
     {levelText[level]}

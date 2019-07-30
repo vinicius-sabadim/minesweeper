@@ -1,0 +1,66 @@
+.cell {
+  align-items: center;
+  background-color: #dddddd;
+  cursor: pointer;
+  display: flex;
+  font-weight: bold;
+  height: 2rem;
+  justify-content: center;
+  max-height: 40px;
+  max-width: 40px;
+  position: relative;
+  user-select: none;
+  width: 2rem;
+}
+
+.cell--common {
+  border-top: 2px solid #eeeeee;
+  border-left: 2px solid #eeeeee;
+  border-bottom: 2px solid #555555;
+  border-right: 2px solid #555555;
+}
+.cell_common:hover {
+  background-color: #eeeeee;
+}
+.cell--over {
+  border-top: 2px solid #eeeeee;
+  border-left: 2px solid #eeeeee;
+  border-bottom: 2px solid #555555;
+  border-right: 2px solid #555555;
+}
+.cell--visible {
+  background-color: #cccccc;
+  border-top: 2px solid #555555;
+  border-left: 2px solid #555555;
+  border-bottom: 2px solid #cccccc;
+  border-right: 2px solid #cccccc;
+}
+.cell--hovered {
+  background-color: #90fc6f;
+}
+.cell--exploded {
+  background-color: #f76767;
+  border-top: 2px solid #555555;
+  border-left: 2px solid #555555;
+  border-bottom: 2px solid #f76767;
+  border-right: 2px solid #f76767;
+}
+.cell--flag {
+  border-top: 2px solid #eeeeee;
+  border-left: 2px solid #eeeeee;
+  border-bottom: 2px solid #555555;
+  border-right: 2px solid #555555;
+}
+.cell--navigation {
+  background-color: linen;
+  border-bottom: 2px solid #555555;
+  border-right: 2px solid #555555;
+}
+.cell__emoji {
+  color: red;
+  font-size: 20px;
+  height: 1.5rem;
+}
+.cell__value {
+  font-size: 22px;
+}

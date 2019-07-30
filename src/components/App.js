@@ -3,10 +3,10 @@ import Grid from './Grid'
 import Information from './Information'
 import { GameProvider } from '../contexts/Game'
 
-import styles from './App.style.js'
+import './App.css'
 
 const App = () => (
-  <div className={styles.app}>
+  <div className="app">
     <GameProvider>
       <Information />
       <Grid />

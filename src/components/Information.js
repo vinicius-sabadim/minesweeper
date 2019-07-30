@@ -5,7 +5,7 @@ import Button from './common/Button'
 import Menu from './Menu'
 import GameContext from '../contexts/Game'
 
-import styles from './Information.style'
+import './Information.css'
 
 const Information = () => {
   const {
@@ -19,26 +19,26 @@ const Information = () => {
   } = useContext(GameContext)
 
   return (
-    <div className={styles.container}>
+    <div className="info__container">
       <Menu />
 
-      <div className={styles.wrapper}>
-        <div className={styles.container}>
+      <div className="info__wrapper">
+        <div className="info__container">
           <p>
             Bombs remaining:{' '}
-            <span className={styles.info}>{bombsRemaining}</span>
+            <span className="info__text">{bombsRemaining}</span>
           </p>
           <p>
-            Time: <span className={styles.info}>{time}</span>
+            Time: <span className="info__text">{time}</span>
           </p>
         </div>
       </div>
 
       <Button onClick={restartGame}>Restart</Button>
 
-      <div className={styles.victory}>{isVictory ? 'Victory :)' : ''}</div>
+      <div className="info__victory">{isVictory ? 'Victory :)' : ''}</div>
 
-      <div className={styles.cheatArea}>
+      <div className="info__cheatArea">
         <h1>Cheat area</h1>
         <Checkbox
           checked={cheat.hover}
@@ -48,7 +48,7 @@ const Information = () => {
         <Button onClick={cleanCorners}>Start with clean corners</Button>
       </div>
 
-      <div className={styles.hints}>
+      <div className="info__hints">
         <p>
           <strong>Arrow keys</strong>: move
         </p>

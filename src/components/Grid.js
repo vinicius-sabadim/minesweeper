@@ -3,7 +3,7 @@ import React, { useContext, useEffect } from 'react'
 import Row from './Row'
 import GameContext from '../contexts/Game'
 
-import styles from './Grid.style'
+import './Grid.css'
 
 const keys = {
   ArrowDown: 'down',
@@ -45,10 +45,10 @@ const Grid = () => {
     return () => {
       window.removeEventListener('keydown', down)
     }
-  }, [])
+  })
 
   return (
-    <table className={styles.grid}>
+    <table className="grid">
       <tbody>{renderGrid(grid)}</tbody>
     </table>
   )

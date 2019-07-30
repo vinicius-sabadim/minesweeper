@@ -3,10 +3,10 @@ import PropTypes from 'prop-types'
 
 import Cell from './Cell'
 
-import styles from './Row.style'
+import './Row.css'
 
 const Row = ({ row }) => (
-  <tr className={styles.row}>
+  <tr className="row">
     {row.map((cell, index) => (
       <Cell key={`cell-${index}`} cell={cell} />
     ))}

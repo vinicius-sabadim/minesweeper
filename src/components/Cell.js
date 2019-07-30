@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 import GameContext from '../contexts/Game'
 
-import styles from './Cell.style'
+import './Cell.css'
 
 const colors = [
   '',
@@ -27,7 +27,7 @@ const Cell = ({ cell }) => {
   } = useContext(GameContext)
   return (
     <td
-      className={`${styleIsFilled(cell, isGameOver)} ${styleIsHovered(
+      className={`cell ${styleIsFilled(cell, isGameOver)} ${styleIsHovered(
         cell
       )} ${styleIsActiveNavigation(cell, navigateUsingArrow)}`}
       style={{ color: colors[cell.dangerLevel] }}
@@ -37,7 +37,7 @@ const Cell = ({ cell }) => {
       onMouseLeave={setHover.bind(this, cell, false)}
     >
       <span
-        className={cell.hasBomb || cell.hasFlag ? styles.emoji : styles.value}
+        className={cell.hasBomb || cell.hasFlag ? 'cell__emoji' : 'cell__value'}
       >
         {renderValue(cell)}
       </span>
@@ -46,18 +46,19 @@ const Cell = ({ cell }) => {
 }
 
 const styleIsFilled = (cell, isGameOver) => {
-  if (cell.hasFlag) return styles.cellFlag
-  if (cell.isVisible && cell.explode) return styles.cellExploded
-  if (cell.isVisible) return styles.cellVisible
-  return isGameOver ? styles.cellOver : styles.cell
+  if (cell.hasFlag) return 'cell--flag'
+  if (cell.isVisible && cell.explode) return 'cell--exploded'
+  if (cell.isVisible) return 'cell--visible'
+  if (isGameOver) return 'cell--over'
+  return 'cell--common'
 }
 
 const styleIsHovered = cell => {
-  if (cell.isHovered) return styles.cellHovered
+  if (cell.isHovered) return 'cell--hovered'
 }
 
 const styleIsActiveNavigation = (cell, id) => {
-  if (cell.id === id) return styles.cellNavigation
+  if (cell.id === id) return 'cell--navigation'
 }
 
 const renderValue = cell => {

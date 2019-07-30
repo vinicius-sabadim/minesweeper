@@ -1,0 +1,15 @@
+.menu__container {
+  display: flex;
+  list-style: none;
+  margin-bottom: 30px;
+}
+.menu__listItem {
+  border-bottom: 2px solid #ffffff;
+  cursor: pointer;
+  margin-right: 20px;
+  padding: 10px 0;
+}
+
+.menu__listItem--active {
+  border-bottom: 2px solid #cccccc;
+}
