@@ -1,31 +1,63 @@
 .info__container {
-  margin-right: 50px;
+  display: flex;
+  justify-content: center;
+  margin: 20px;
 }
+
 .info__wrapper {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
+
+@media screen and (min-width: 1281px) {
+  .info__container {
+    display: block;
+    margin: 0;
+    margin-right: 50px;
+  }
+
+  .info__wrapper {
+    margin-bottom: 30px;
+  }
+}
+
 .info__text {
   color: #4286f4;
   font-size: 20px;
   font-weight: bold;
 }
+
 .info__victory {
   color: #4286f4;
   font-size: 20px;
   font-weight: bold;
   margin-top: 30px;
 }
+
 .info__cheatArea {
-  border: 1px solid #bbbbbb;
-  margin-top: 30px;
-  padding: 10px;
+  padding: 10px 30px;
 }
+
+@media screen and (min-width: 1281px) {
+  .info__cheatArea {
+    border: 1px solid #bbbbbb;
+    padding: 10px;
+    margin-top: 30px;
+  }
+}
+
 .info__cheatArea > h1 {
   color: #555555;
   font-size: 20px;
   margin-bottom: 10px;
 }
+
 .info__hints {
   line-height: 24px;
-  padding: 20px;
+  padding: 10px 20px;
+}
+
+@media screen and (min-width: 1281px) {
+  .info__hints {
+    padding: 20px;
+  }
 }

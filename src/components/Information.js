@@ -20,10 +20,10 @@ const Information = () => {
 
   return (
     <div className="info__container">
-      <Menu />
+      <div>
+        <Menu />
 
-      <div className="info__wrapper">
-        <div className="info__container">
+        <div className="info__wrapper">
           <p>
             Bombs remaining:{' '}
             <span className="info__text">{bombsRemaining}</span>
@@ -32,9 +32,8 @@ const Information = () => {
             Time: <span className="info__text">{time}</span>
           </p>
         </div>
+        <Button onClick={restartGame}>Restart</Button>
       </div>
-
-      <Button onClick={restartGame}>Restart</Button>
 
       <div className="info__victory">{isVictory ? 'Victory :)' : ''}</div>
 

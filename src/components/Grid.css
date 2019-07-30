@@ -5,4 +5,11 @@
   border-bottom: 2px solid #eeeeee;
   border-right: 2px solid #eeeeee;
   height: 100%;
+  margin: 0 auto;
+}
+
+@media screen and (min-width: 1281px) {
+  .grid {
+    margin: 0;
+  }
 }

@@ -1,8 +1,15 @@
 .menu__container {
   display: flex;
   list-style: none;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
+
+@media screen and (min-width: 1281px) {
+  .menu__container {
+    margin-bottom: 30px;
+  }
+}
+
 .menu__listItem {
   border-bottom: 2px solid #ffffff;
   cursor: pointer;
